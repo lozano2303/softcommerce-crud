@@ -1,4 +1,11 @@
-#img{
-    width: 250px;
-    height: 250px;
+#img-carrousel{
+    width: 750px;
+    height: 550px;
+}
+#logo-carrousel{
+    width: 125px;
+    height: 100px;
+}
+#top-products{
+    height: 450px;
 }
