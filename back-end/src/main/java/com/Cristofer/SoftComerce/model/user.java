@@ -36,6 +36,15 @@ public class user {
         this.createdAt = createdAt;
     }
 
+    // Constructor sin parámetros
+    public user() {
+    }
+
+    // Otros constructores, si los necesitas
+    public user(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
     public int getuserID() {
         return userID;
     }
