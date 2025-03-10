@@ -24,6 +24,10 @@ public class category {
         this.categoryName = categoryName;
     }
 
+    public category() {
+        // Inicializa los valores por defecto si es necesario
+    }
+
     public int getcategoryID(){
         return categoryID;
     }

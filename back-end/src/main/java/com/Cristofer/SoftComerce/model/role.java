@@ -22,6 +22,9 @@ public class role {
         this.roleName = roleName;
     }
 
+    public role(){
+}
+
     public int getroleID() {
         return roleID;
     }

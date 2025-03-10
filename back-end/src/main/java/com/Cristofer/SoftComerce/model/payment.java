@@ -42,6 +42,10 @@ public class payment {
         this.createdAt = createdAt;
     }
 
+    public payment() {
+        // Inicializa los valores por defecto si es necesario
+    }
+
     public int getPaymentID() {
         return paymentID;
     }
