@@ -6,13 +6,11 @@ public class orderDTO {
 
     private int userID;
     private double totalPrice;
-    private String status;
     private LocalDateTime createdAt;
 
-    public orderDTO(int userID, double totalPrice, String status, LocalDateTime createdAt) {
+    public orderDTO(int userID, double totalPrice, LocalDateTime createdAt) {
         this.userID = userID;
         this.totalPrice = totalPrice;
-        this.status = status;
         this.createdAt = createdAt;
     }
 
@@ -30,14 +28,6 @@ public class orderDTO {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

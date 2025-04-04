@@ -5,13 +5,11 @@ public class paymentDTO {
     private int userID;
     private double amount;
     private String method;
-    private String status;
 
-    public paymentDTO(int userID, double amount, String method, String status) {
+    public paymentDTO(int userID, double amount, String method) {
         this.userID = userID;
         this.amount = amount;
         this.method = method;
-        this.status = status;
     }
 
     public int getUserID() {
@@ -38,11 +36,4 @@ public class paymentDTO {
         this.method = method;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

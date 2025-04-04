@@ -25,14 +25,66 @@ public class user {
     @Column(name = "password", length = 150, nullable = false)
     private String password;
 
+    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    private boolean status;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public user(int userID, String name, String email, String password, LocalDateTime createdAt) {
+    public user(int userID, String name, String email, String password, boolean status, LocalDateTime createdAt) {
         this.userID = userID;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -45,43 +97,5 @@ public class user {
         this.email = email;
         this.password = password;
     }
-    public int getuserID() {
-        return userID;
-    }
 
-    public void setuserID(int userID) {
-        this.userID = userID;
-    }
-
-    public String getname() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getemail() {
-        return email;
-    }
-
-    public void setemail(String email) {
-        this.email = email;
-    }
-
-    public String getpassword() {
-        return password;
-    }
-
-    public void setpassword(String password) {
-        this.password = password;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

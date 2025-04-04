@@ -23,8 +23,8 @@ public class order {
     @Column(name = "total_price", nullable = false)
     private double totalPrice;
 
-    @Column(name = "status", length = 50, nullable = false)
-    private String status;
+    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    private boolean status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -34,7 +34,7 @@ public class order {
     }
 
     // Constructor con parámetros
-    public order(int orderID, int userID, double totalPrice, String status, LocalDateTime createdAt) {
+    public order(int orderID, int userID, double totalPrice, boolean status, LocalDateTime createdAt) {
         this.orderID = orderID;
         this.userID = userID;
         this.totalPrice = totalPrice;
@@ -67,11 +67,11 @@ public class order {
         this.totalPrice = totalPrice;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

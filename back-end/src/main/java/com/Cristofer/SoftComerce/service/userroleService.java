@@ -45,7 +45,7 @@ public class userroleService {
     // Convertir de userrole a userroleDTO
     public userroleDTO convertToDTO(userrole userrole) {
         return new userroleDTO(
-            userrole.getUser().getuserID(),
+            userrole.getUser().getUserID(),
             userrole.getRole().getroleID()
         );
     }

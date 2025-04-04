@@ -27,13 +27,13 @@ public class payment {
     @Column(name = "method", length = 50, nullable = false)
     private String method;
 
-    @Column(name = "status", length = 50, nullable = false)
-    private String status;
+    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    private boolean status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public payment(int paymentID, user user, double amount, String method, String status, LocalDateTime createdAt) {
+    public payment(int paymentID, user user, double amount, String method,boolean status, LocalDateTime createdAt) {
         this.paymentID = paymentID;
         this.user = user;
         this.amount = amount;
@@ -78,11 +78,11 @@ public class payment {
         this.method = method;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

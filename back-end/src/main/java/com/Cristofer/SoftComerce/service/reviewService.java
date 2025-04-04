@@ -48,7 +48,7 @@ public class reviewService {
         return new reviewDTO(
             review.getRating(),
             review.getComment(),
-            review.getUser().getuserID(),
+            review.getUser().getUserID(),
             review.getProduct().getproductID()
         );
     }
