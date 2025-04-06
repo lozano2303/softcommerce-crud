@@ -1,7 +1,14 @@
 package com.Cristofer.SoftComerce.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity(name = "shipping")
 public class shipping {
@@ -27,15 +34,15 @@ public class shipping {
     @Column(name = "postal_code", length = 20, nullable = false)
     private String postal_code;
 
-    @Column(name = "status", length = 50, nullable = false)
-    private String status;
+    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    private boolean status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime created_at;
 
     public shipping() {}
 
-    public shipping(int shippingID, order order, String address, String city, String country, String postal_code, String status, LocalDateTime created_at) {
+    public shipping(int shippingID, order order, String address, String city, String country, String postal_code, boolean status, LocalDateTime created_at) {
         this.shippingID = shippingID;
         this.order = order;
         this.address = address;
@@ -94,11 +101,11 @@ public class shipping {
         this.postal_code = postal_code;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

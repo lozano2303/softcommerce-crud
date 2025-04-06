@@ -9,16 +9,14 @@ public class shippingDTO {
     private String city;
     private String country;
     private String postal_code;
-    private String status;
     private LocalDateTime created_at;
 
-    public shippingDTO(int orderID, String address, String city, String country, String postal_code, String status, LocalDateTime created_at) {
+    public shippingDTO(int orderID, String address, String city, String country, String postal_code, LocalDateTime created_at) {
         this.orderID = orderID;
         this.address = address;
         this.city = city;
         this.country = country;
         this.postal_code = postal_code;
-        this.status = status;
         this.created_at = created_at;
     }
 
@@ -60,14 +58,6 @@ public class shippingDTO {
 
     public void setPostal_code(String postal_code) {
         this.postal_code = postal_code;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public LocalDateTime getCreated_at() {

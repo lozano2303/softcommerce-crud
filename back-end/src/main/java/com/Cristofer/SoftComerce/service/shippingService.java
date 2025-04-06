@@ -38,7 +38,6 @@ public class shippingService {
             shipping.getCity(),
             shipping.getCountry(),
             shipping.getPostal_code(),
-            shipping.getStatus(),
             shipping.getCreated_at()
         );
     }
@@ -51,7 +50,7 @@ public class shippingService {
             shippingDTO.getCity(),
             shippingDTO.getCountry(),
             shippingDTO.getPostal_code(),
-            shippingDTO.getStatus(),
+            true,
             LocalDateTime.now()
         );
     }
