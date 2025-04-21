@@ -10,11 +10,14 @@ public class productDTO {
     
     private int stock;
 
-    public productDTO(String name, String description, double price, int stock) {
+    private String imageUrl;
+
+    public productDTO(String name, String description, double price, int stock, String imageUrl) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -49,4 +52,11 @@ public class productDTO {
         this.stock = stock;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

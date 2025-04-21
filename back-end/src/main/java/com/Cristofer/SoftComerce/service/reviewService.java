@@ -49,7 +49,7 @@ public class reviewService {
             review.getRating(),
             review.getComment(),
             review.getUser().getUserID(),
-            review.getProduct().getproductID()
+            review.getProduct().getProductID()
         );
     }
 

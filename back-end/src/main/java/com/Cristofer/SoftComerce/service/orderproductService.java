@@ -49,7 +49,7 @@ public class orderproductService {
     public orderproductDTO convertToDTO(orderproduct orderproduct) {
         return new orderproductDTO(
             orderproduct.getOrder().getOrderID(),
-            orderproduct.getProduct().getproductID(),
+            orderproduct.getProduct().getProductID(),
             orderproduct.getQuantity(),
             orderproduct.getSubtotal()
         );

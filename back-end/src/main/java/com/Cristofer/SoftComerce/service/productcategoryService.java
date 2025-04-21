@@ -1,15 +1,16 @@
 package com.Cristofer.SoftComerce.service;
 
-import com.Cristofer.SoftComerce.DTO.productcategoryDTO;
-import com.Cristofer.SoftComerce.model.product;
-import com.Cristofer.SoftComerce.model.category;
-import com.Cristofer.SoftComerce.model.productcategory;
-import com.Cristofer.SoftComerce.model.productcategoryId;
-import com.Cristofer.SoftComerce.repository.Iproductcategory;
-import com.Cristofer.SoftComerce.repository.Iproduct;
-import com.Cristofer.SoftComerce.repository.Icategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.Cristofer.SoftComerce.DTO.productcategoryDTO;
+import com.Cristofer.SoftComerce.model.category;
+import com.Cristofer.SoftComerce.model.product;
+import com.Cristofer.SoftComerce.model.productcategory;
+import com.Cristofer.SoftComerce.model.productcategoryId;
+import com.Cristofer.SoftComerce.repository.Icategory;
+import com.Cristofer.SoftComerce.repository.Iproduct;
+import com.Cristofer.SoftComerce.repository.Iproductcategory;
 
 @Service
 public class productcategoryService {
@@ -45,7 +46,7 @@ public class productcategoryService {
     // Convertir de productcategory a productcategoryDTO
     public productcategoryDTO convertToDTO(productcategory productcategory) {
         return new productcategoryDTO(
-            productcategory.getProduct().getproductID(),
+            productcategory.getProduct().getProductID(),
             productcategory.getCategory().getcategoryID()
         );
     }

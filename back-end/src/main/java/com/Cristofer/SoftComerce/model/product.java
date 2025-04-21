@@ -31,65 +31,91 @@ public class product{
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public product(int productID, String name, String description, double price, int stock, LocalDateTime createdAt) {
+    @Column(name = "image_url", columnDefinition = "LONGTEXT")
+    private String imageUrl;
+
+    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    private boolean status;
+
+
+    public product(int productID, String name, String description, double price, int stock, LocalDateTime createdAt, String imageUrl, boolean status) {
         this.productID = productID;
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.createdAt = createdAt;
+        this.imageUrl = imageUrl;
+        this.status = status;
+
     }
 
     public product() {
         // Inicializa los valores por defecto si es necesario
     }
 
-    public int getproductID() {
+    public int getProductID() {
         return productID;
     }
 
-    public void setproductID(int productID) {
+    public void setProductID(int productID) {
         this.productID = productID;
     }
 
-    public String getname() {
+    public String getName() {
         return name;
     }
 
-    public void setname(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setdescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public double getprice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setprice(double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public int getstock() {
+    public int getStock() {
         return stock;
     }
 
-    public void setstock(int stock) {
+    public void setStock(int stock) {
         this.stock = stock;
     }
 
-    public LocalDateTime getcreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setcreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }
 
