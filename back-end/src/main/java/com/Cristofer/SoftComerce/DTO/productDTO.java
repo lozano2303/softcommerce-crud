@@ -1,5 +1,7 @@
 package com.Cristofer.SoftComerce.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class productDTO {
 
     private String name;
@@ -10,6 +12,7 @@ public class productDTO {
     
     private int stock;
 
+    @JsonProperty("imgUrl") // Agregar esta anotación
     private String imageUrl;
 
     public productDTO(String name, String description, double price, int stock, String imageUrl) {

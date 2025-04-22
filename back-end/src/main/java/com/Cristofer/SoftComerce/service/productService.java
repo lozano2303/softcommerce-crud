@@ -43,11 +43,15 @@ public class productService {
 
     // ✅ Eliminar (desactivar) producto
     public responseDTO deleteProduct(int id) {
-        Optional<product> product = findById(id);
+        Optional<product> product = findById(id); // Buscar el producto por ID
         if (!product.isPresent()) {
             return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El producto no existe");
         }
-
+    
+        product productToDelete = product.get();
+        productToDelete.setStatus(false); // Cambiar el estado a "false"
+        data.save(productToDelete); // Guardar los cambios en la base de datos
+    
         return new responseDTO(HttpStatus.OK.toString(), "Producto eliminado correctamente");
     }
 
@@ -81,6 +85,11 @@ public class productService {
                 dto.getPrice() >= 0 &&
                 dto.getStock() >= 0;
     }
+
+    public List<product> filterProducts(String name, String description, Double price, Boolean status) {
+        return data.filterProducts(name, description, price, status);
+    }
+    
 
     // ✅ Conversión de DTO a modelo
     public product convertToModel(productDTO productDTO) {

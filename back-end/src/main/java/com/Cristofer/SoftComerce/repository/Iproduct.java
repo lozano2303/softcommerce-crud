@@ -15,10 +15,10 @@ public interface Iproduct extends JpaRepository<product, Integer> {
 
     // 🔍 Filtro avanzado
     @Query("SELECT p FROM product p WHERE " +
-           "(:name IS NULL OR p.name LIKE %:name%) AND " +
-           "(:description IS NULL OR p.description LIKE %:description%) AND " +
-           "(:price IS NULL OR p.price = :price) AND " +
-           "(:status IS NULL OR p.status = :status)")
+            "(:name IS NULL OR p.name LIKE %:name%) AND " +
+            "(:description IS NULL OR p.description LIKE %:description%) AND " +
+            "(:price IS NULL OR p.price = :price) AND " +
+            "(:status IS NULL OR p.status = :status)")
     List<product> filterProducts(
         @Param("name") String name,
         @Param("description") String description,
