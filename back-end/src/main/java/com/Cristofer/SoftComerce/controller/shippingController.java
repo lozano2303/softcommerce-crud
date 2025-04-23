@@ -1,16 +1,22 @@
 package com.Cristofer.SoftComerce.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import com.Cristofer.SoftComerce.DTO.shippingDTO;
-import com.Cristofer.SoftComerce.service.shippingService;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.Cristofer.SoftComerce.DTO.responseDTO;
+import com.Cristofer.SoftComerce.DTO.shippingDTO;
+import com.Cristofer.SoftComerce.service.shippingService;
 
 @RestController
 @RequestMapping("/api/v1/shipping")
@@ -19,13 +25,52 @@ public class shippingController {
     @Autowired
     private shippingService shippingService;
 
+    // Registrar un nuevo envío
     @PostMapping("/")
-    public ResponseEntity<Object> registerShipping(@RequestBody shippingDTO shipping) {
-        try {
-            shippingService.save(shipping);
-            return new ResponseEntity<>("Shipping registered successfully", HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> registerShipping(@RequestBody shippingDTO shippingDTO) {
+        responseDTO response = shippingService.save(shippingDTO);
+        if (response.getStatus().equals("success")) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Obtener todos los envíos
+    @GetMapping("/")
+    public ResponseEntity<Object> getAllShippings() {
+        return new ResponseEntity<>(shippingService.findAll(), HttpStatus.OK);
+    }
+
+    // Obtener un envío por su ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getShippingById(@PathVariable int id) {
+        Optional<shippingDTO> shipping = shippingService.findById(id).map(shippingService::convertToDTO);
+        if (!shipping.isPresent()) {
+            return new ResponseEntity<>("Envío no encontrado", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(shipping.get(), HttpStatus.OK);
+    }
+
+    // Eliminar un envío por su ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteShipping(@PathVariable int id) {
+        responseDTO response = shippingService.deleteById(id);
+        if (response.getStatus().equals("success")) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Actualizar un envío por su ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateShipping(@PathVariable int id, @RequestBody shippingDTO shippingDTO) {
+        responseDTO response = shippingService.update(id, shippingDTO);
+        if (response.getStatus().equals("success")) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

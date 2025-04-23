@@ -1,12 +1,16 @@
 package com.Cristofer.SoftComerce.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.Cristofer.SoftComerce.DTO.orderDTO;
 import com.Cristofer.SoftComerce.DTO.responseDTO;
@@ -14,10 +18,6 @@ import com.Cristofer.SoftComerce.model.order;
 import com.Cristofer.SoftComerce.model.user;
 import com.Cristofer.SoftComerce.repository.Iorder;
 import com.Cristofer.SoftComerce.repository.Iuser;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class orderService {
@@ -127,42 +127,6 @@ public class orderService {
     public List<order> filterOrdersByUser(int userID) {
         return orderRepository.findByUserID(userID); // Suponiendo que exista este método en el repositorio
     }
-
-    // Convertir entidad a DTO
-    public orderDTO convertToDTO(order orderEntity) {
-        try {
-            return new orderDTO(
-                orderEntity.getUserID().getUserID(), // Obtener el ID del usuario
-                orderEntity.getTotalPrice(),
-                orderEntity.getCreatedAt()
-            );
-        } catch (Exception e) {
-            logger.error("Error al convertir a DTO: {}", e.getMessage());
-            throw new RuntimeException("Error al convertir a DTO.");
-        }
-    }
-
-    // Convertir DTO a entidad
-    public order convertToModel(orderDTO orderDTO) {
-        try {
-            Optional<user> userEntity = userRepository.findById(orderDTO.getUserID());
-            if (!userEntity.isPresent()) {
-                throw new IllegalArgumentException("Usuario no encontrado");
-            }
-
-            return new order(
-                0, // ID autogenerado
-                userEntity.get(),
-                orderDTO.getTotalPrice(),
-                true, // Estado inicial como true
-                LocalDateTime.now()
-            );
-        } catch (Exception e) {
-            logger.error("Error al convertir a modelo: {}", e.getMessage());
-            throw new RuntimeException("Error al convertir a modelo.");
-        }
-    }
-
 // Convertir entidad de orden a DTO
 public orderDTO convertOrderToDTO(order orderEntity) {
     return new orderDTO(
