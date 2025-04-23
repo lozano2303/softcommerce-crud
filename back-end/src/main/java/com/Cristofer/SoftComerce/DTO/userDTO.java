@@ -8,10 +8,13 @@ public class userDTO {
 
     private String password;
 
-    public userDTO(String name, String email, String password) {
+    private int roleID; // Campo adicional para manejar el rol del usuario
+
+    public userDTO(String name, String email, String password, int roleID) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.roleID = roleID;
     }
 
     public String getName() {
@@ -38,4 +41,11 @@ public class userDTO {
         this.password = password;
     }
 
+    public int getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(int roleID) {
+        this.roleID = roleID;
+    }
 }

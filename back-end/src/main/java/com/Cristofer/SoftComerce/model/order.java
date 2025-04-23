@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Table(name = "ordertable")
 @Entity
@@ -17,8 +19,9 @@ public class order {
     @Column(name = "orderID")
     private int orderID;
 
-    @Column(name = "userID", nullable = false)
-    private int userID;
+    @ManyToOne
+    @JoinColumn(name = "userID", nullable = false)
+    private user userID;
 
     @Column(name = "total_price", nullable = false)
     private double totalPrice;
@@ -34,7 +37,7 @@ public class order {
     }
 
     // Constructor con parámetros
-    public order(int orderID, int userID, double totalPrice, boolean status, LocalDateTime createdAt) {
+    public order(int orderID, user userID, double totalPrice, boolean status, LocalDateTime createdAt) {
         this.orderID = orderID;
         this.userID = userID;
         this.totalPrice = totalPrice;
@@ -51,11 +54,11 @@ public class order {
         this.orderID = orderID;
     }
 
-    public int getUserID() {
+    public user getUserID() {
         return userID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(user userID) {
         this.userID = userID;
     }
 

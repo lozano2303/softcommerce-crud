@@ -7,9 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity(name = "user")
-
 public class user {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,21 +26,32 @@ public class user {
     @Column(name = "password", length = 150, nullable = false)
     private String password;
 
-    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private boolean status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public user(int userID, String name, String email, String password, boolean status, LocalDateTime createdAt) {
+    @ManyToOne
+    @JoinColumn(name = "roleID", nullable = false)
+    private role roleID;
+
+    // Constructor sin parámetros
+    public user() {
+    }
+
+    // Constructor con todos los campos
+    public user(int userID, String name, String email, String password, boolean status, LocalDateTime createdAt, role roleID) {
         this.userID = userID;
         this.name = name;
         this.email = email;
         this.password = password;
         this.status = status;
         this.createdAt = createdAt;
+        this.roleID = roleID;
     }
 
+    // Getters y setters
     public int getUserID() {
         return userID;
     }
@@ -88,14 +100,11 @@ public class user {
         this.createdAt = createdAt;
     }
 
-    // Constructor sin parámetros
-    public user() {
+    public role getRoleID() {
+        return roleID;
     }
 
-    // Otros constructores, si los necesitas
-    public user(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public void setRoleID(role roleID) {
+        this.roleID = roleID;
     }
-
 }

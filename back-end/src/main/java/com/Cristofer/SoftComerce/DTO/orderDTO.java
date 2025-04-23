@@ -3,8 +3,7 @@ package com.Cristofer.SoftComerce.DTO;
 import java.time.LocalDateTime;
 
 public class orderDTO {
-
-    private int userID;
+    private int userID; // Cambiar el tipo a int (o String si el ID es String)
     private double totalPrice;
     private LocalDateTime createdAt;
 

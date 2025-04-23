@@ -5,39 +5,43 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Entity (name = "role")
-
+@Table(name = "roletable")
+@Entity
 public class role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roleID")
     private int roleID;
 
-    @Column(name = "roleName", length = 150, nullable = false)
-    private String roleName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 
-    public role(int roleID, String roleName) {
-        this.roleID = roleID;
-        this.roleName = roleName;
+    // Constructor sin parámetros (predeterminado)
+    public role() {
     }
 
-    public role(){
-}
+    // Constructor con parámetros
+    public role(int roleID, String name) {
+        this.roleID = roleID;
+        this.name = name;
+    }
 
-    public int getroleID() {
+    // Getters y setters
+    public int getRoleID() {
         return roleID;
     }
 
-    public void setroleID(int roleID) {
+    public void setRoleID(int roleID) {
         this.roleID = roleID;
     }
 
-    public String getroleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
-    public void setroleName(String roleName) {
-        this.roleName = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 }

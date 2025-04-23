@@ -47,7 +47,7 @@ public class userController {
     // Eliminar un usuario por su ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable int id) {
-        responseDTO response = userService.deleteUser(id);
+        responseDTO response = userService.deleteById(id);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
