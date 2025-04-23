@@ -39,6 +39,11 @@ public class orderService {
         return orderRepository.findById(id);
     }
 
+
+    public List<order> findByUserId(int userId) {
+        return orderRepository.findByUserId(userId);
+    }
+
     // Verificar si una orden existe por ID
     public boolean existsById(int id) {
         return orderRepository.existsById(id);

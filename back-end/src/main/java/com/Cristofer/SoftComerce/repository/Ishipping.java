@@ -10,10 +10,6 @@ import com.Cristofer.SoftComerce.model.shipping;
 
 public interface Ishipping extends JpaRepository<shipping, Integer> {
 
-    // Obtener todos los envíos activos
-    @Query("SELECT s FROM shipping s WHERE s.status = true")
-    List<shipping> getListShippingActive();
-
     // Filtrar envíos por parámetros opcionales
     @Query("""
         SELECT s
@@ -22,13 +18,13 @@ public interface Ishipping extends JpaRepository<shipping, Integer> {
             AND (:address IS NULL OR s.address LIKE %:address%)
             AND (:city IS NULL OR s.city LIKE %:city%)
             AND (:country IS NULL OR s.country LIKE %:country%)
-            AND (:status IS NULL OR s.status = :status)
+            AND (:postalCode IS NULL OR s.postal_code LIKE %:postalCode%)
     """)
-    List<shipping> filterShipping(
+    List<shipping> filterShippings(
         @Param("orderID") Integer orderID,
         @Param("address") String address,
         @Param("city") String city,
         @Param("country") String country,
-        @Param("status") Boolean status
+        @Param("postalCode") String postalCode
     );
 }

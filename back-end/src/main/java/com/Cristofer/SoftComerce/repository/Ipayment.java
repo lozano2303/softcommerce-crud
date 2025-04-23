@@ -14,6 +14,10 @@ public interface Ipayment extends JpaRepository<payment, Integer> {
     @Query("SELECT p FROM payment p WHERE p.status = true")
     List<payment> getListPaymentActive();
 
+    @Query("SELECT p FROM payment p WHERE p.method LIKE %:method%")
+    List<payment> findByMethod(@Param("method") String method);
+
+    
     // Filtrar pagos por parámetros opcionales
     @Query("""
         SELECT p

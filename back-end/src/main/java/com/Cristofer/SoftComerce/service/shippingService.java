@@ -3,6 +3,7 @@ package com.Cristofer.SoftComerce.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -38,6 +39,15 @@ public class shippingService {
     // Verificar si un envío existe por ID
     public boolean existsById(int id) {
         return shippingRepo.existsById(id);
+    }
+
+    @Autowired
+    private Ishipping shippingRepository; // Asegúrate de que está correctamente inyectado
+
+    // Método para filtrar envíos por campos opcionales
+    public List<shippingDTO> filterShippings(Integer orderID, String address, String city, String country, String postalCode) {
+        List<shipping> shippings = shippingRepository.filterShippings(orderID, address, city, country, postalCode);
+        return shippings.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     // Guardar envío con validaciones

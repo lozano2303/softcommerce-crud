@@ -3,6 +3,7 @@ package com.Cristofer.SoftComerce.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,12 @@ public class paymentService {
     public boolean existsById(int id) {
         return paymentRepository.existsById(id);
     }
+    
+    public List<paymentDTO> filterPaymentsByMethod(String method) {
+        List<payment> payments = paymentRepository.findByMethod(method);
+        return payments.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
 
     // Guardar pago con validaciones
     @Transactional

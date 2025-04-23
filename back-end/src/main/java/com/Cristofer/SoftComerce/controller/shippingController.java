@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Cristofer.SoftComerce.DTO.responseDTO;
@@ -72,5 +73,18 @@ public class shippingController {
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Filtrar envíos por campos opcionales
+    @GetMapping("/filter")
+    public ResponseEntity<Object> filterShippings(
+            @RequestParam(required = false, name = "orderID") Integer orderID,
+            @RequestParam(required = false, name = "address") String address,
+            @RequestParam(required = false, name = "city") String city,
+            @RequestParam(required = false, name = "country") String country,
+            @RequestParam(required = false, name = "postal_code") String postalCode) {
+
+        var shippingList = shippingService.filterShippings(orderID, address, city, country, postalCode);
+        return new ResponseEntity<>(shippingList, HttpStatus.OK);
     }
 }

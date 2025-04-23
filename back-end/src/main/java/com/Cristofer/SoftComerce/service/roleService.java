@@ -2,12 +2,11 @@ package com.Cristofer.SoftComerce.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.Cristofer.SoftComerce.DTO.responseDTO;
 import com.Cristofer.SoftComerce.DTO.roleDTO;
@@ -18,9 +17,21 @@ import com.Cristofer.SoftComerce.repository.Irole;
 public class roleService {
 
     @Autowired
-    private Irole roleRepository;
+    private Irole roleRepository; // Cambiado de 'data' a 'roleRepository'
 
-    // Listar todos los roles
+    // Guardar rol
+    public responseDTO save(roleDTO roleDTO) {
+        if (!validateRole(roleDTO)) {
+            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del rol inválidos");
+        }
+    
+        role roleRegister = convertToModel(roleDTO);
+        roleRepository.save(roleRegister);
+    
+        return new responseDTO(HttpStatus.OK.toString(), "Rol guardado exitosamente");
+    }
+
+    // Obtener todos los roles
     public List<role> findAll() {
         return roleRepository.findAll();
     }
@@ -30,82 +41,67 @@ public class roleService {
         return roleRepository.findById(id);
     }
 
-    // Verificar si un rol existe por ID
-    public boolean existsById(int id) {
-        return roleRepository.existsById(id);
-    }
-
-    // Guardar rol con validaciones
-    @Transactional
-    public responseDTO save(roleDTO roleDTO) {
-        // Validaciones
-        if (roleDTO.getroleName() == null || roleDTO.getroleName().length() < 1 || roleDTO.getroleName().length() > 50) {
-            return new responseDTO("El nombre del rol debe estar entre 1 y 50 caracteres", "error");
-        }
-
-        try {
-            // Convertir DTO a entidad y guardar
-            role roleEntity = convertToModel(roleDTO);
-            roleRepository.save(roleEntity);
-            return new responseDTO("Rol registrado correctamente", "success");
-        } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al guardar el rol", "error");
-        } catch (Exception e) {
-            return new responseDTO("Error inesperado al guardar el rol", "error");
-        }
-    }
-
-    // Actualizar rol por ID
-    @Transactional
+    // Actualizar rol
     public responseDTO update(int id, roleDTO roleDTO) {
         Optional<role> existingRole = findById(id);
         if (!existingRole.isPresent()) {
             return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El rol no existe");
         }
 
-        // Validaciones
-        if (roleDTO.getroleName() == null || roleDTO.getroleName().length() < 1 || roleDTO.getroleName().length() > 50) {
-            return new responseDTO("El nombre del rol debe estar entre 1 y 50 caracteres", "error");
+        if (!validateRole(roleDTO)) {
+            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del rol inválidos");
         }
 
-        try {
-            // Actualizar datos del rol
-            role roleToUpdate = existingRole.get();
-            roleToUpdate.setName(roleDTO.getroleName());
-            roleRepository.save(roleToUpdate);
-            return new responseDTO("Rol actualizado exitosamente", "success");
-        } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al actualizar el rol", "error");
-        } catch (Exception e) {
-            return new responseDTO("Error inesperado al actualizar el rol", "error");
-        }
+        role roleToUpdate = existingRole.get();
+        roleToUpdate.setName(roleDTO.getroleName()); // Asumiendo que el método se llama setName()
+
+        roleRepository.save(roleToUpdate);
+
+        return new responseDTO(HttpStatus.OK.toString(), "Rol actualizado correctamente");
     }
 
-    // Eliminar rol por ID
-    @Transactional
+    // Eliminar rol
     public responseDTO deleteById(int id) {
-        Optional<role> roleEntity = findById(id);
-        if (!roleEntity.isPresent()) {
-            return new responseDTO("Rol no encontrado", "error");
+        Optional<role> role = findById(id);
+        if (!role.isPresent()) {
+            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El rol no existe");
         }
 
-        try {
-            roleRepository.deleteById(id);
-            return new responseDTO("Rol eliminado correctamente", "success");
-        } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al eliminar el rol", "error");
-        } catch (Exception e) {
-            return new responseDTO("Error inesperado al eliminar el rol", "error");
+        roleRepository.delete(role.get());
+
+        return new responseDTO(HttpStatus.OK.toString(), "Rol eliminado correctamente");
+    }
+
+    // Filtrar roles por nombre
+    public List<role> filterRoles(String roleName) {
+        List<role> allRoles = roleRepository.findAll();
+        
+        if (roleName == null || roleName.isEmpty()) {
+            return allRoles;
         }
+        
+        // Filtrar roles que contengan el texto proporcionado (case insensitive)
+        return allRoles.stream()
+                .filter(r -> r.getName().toLowerCase().contains(roleName.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
-    // Convertir entidad a DTO
-    public roleDTO convertToDTO(role roleEntity) {
-        return new roleDTO(roleEntity.getName());
+    // Validaciones
+    private boolean validateRole(roleDTO dto) {
+        return dto.getroleName() != null && !dto.getroleName().isBlank();
     }
 
-    // Convertir DTO a entidad
+    // Conversión de DTO a modelo
     public role convertToModel(roleDTO roleDTO) {
-        return new role(0, roleDTO.getroleName());
+        role role = new role();
+        role.setName(roleDTO.getroleName());
+        return role;
+    }
+
+    // Conversión de modelo a DTO
+    public roleDTO convertToDTO(role role) {
+        roleDTO dto = new roleDTO(null);
+        dto.setroleName(role.getName());
+        return dto;
     }
 }

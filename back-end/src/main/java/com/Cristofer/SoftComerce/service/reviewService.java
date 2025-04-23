@@ -3,6 +3,7 @@ package com.Cristofer.SoftComerce.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -34,6 +35,12 @@ public class reviewService {
         public Optional<review> findById(int id) {
             return reviewRepository.findById(id);
         }
+
+            public List<reviewDTO> filterReviews(Integer rating, String comment, Integer userID, Integer productID) {
+        List<review> reviews = reviewRepository.filterReviews(rating, comment, userID, productID);
+        return reviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
 
     @Autowired
     private Iuser userRepository;

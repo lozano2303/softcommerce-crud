@@ -3,26 +3,26 @@ package com.Cristofer.SoftComerce.DTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class productDTO {
-
     private String name;
-
     private String description;
-
     private double price;
-    
     private int stock;
 
-    @JsonProperty("imgUrl") // Agregar esta anotación
+    @JsonProperty("imgUrl")
     private String imageUrl;
 
-    public productDTO(String name, String description, double price, int stock, String imageUrl) {
+    private int categoryID;
+
+    public productDTO(String name, String description, double price, int stock, String imageUrl, int categoryID) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.imageUrl = imageUrl;
+        this.categoryID = categoryID;
     }
 
+    // Getters y Setters
     public String getName() {
         return name;
     }
@@ -61,5 +61,13 @@ public class productDTO {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 }

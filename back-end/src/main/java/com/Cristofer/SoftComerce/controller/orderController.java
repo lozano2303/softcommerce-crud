@@ -3,7 +3,15 @@ package com.Cristofer.SoftComerce.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.Cristofer.SoftComerce.DTO.orderDTO;
 import com.Cristofer.SoftComerce.DTO.responseDTO;
@@ -17,7 +25,7 @@ public class orderController {
     private orderService orderService;
 
     // Registrar una nueva orden
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> registerOrder(@RequestBody orderDTO orderDTO) {
         responseDTO response = orderService.save(orderDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
@@ -28,7 +36,7 @@ public class orderController {
     }
 
     // Obtener todas las órdenes
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAllOrders() {
         return new ResponseEntity<>(orderService.findAll(), HttpStatus.OK);
     }
@@ -63,5 +71,14 @@ public class orderController {
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Filtrar órdenes por userId
+    @GetMapping("/filter")
+    public ResponseEntity<Object> filterOrdersByUser(
+            @RequestParam(name = "userId") int userId) {
+        
+        var orders = orderService.findByUserId(userId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 }

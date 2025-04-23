@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,5 +71,17 @@ public class reviewController {
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Filtrar reseñas por campos opcionales
+    @GetMapping("/filter")
+    public ResponseEntity<Object> filterReviews(
+            @RequestParam(required = false, name = "rating") Integer rating,
+            @RequestParam(required = false, name = "comment") String comment,
+            @RequestParam(required = false, name = "userID") Integer userID,
+            @RequestParam(required = false, name = "productID") Integer productID) {
+
+        var reviewList = reviewService.filterReviews(rating, comment, userID, productID);
+        return new ResponseEntity<>(reviewList, HttpStatus.OK);
     }
 }

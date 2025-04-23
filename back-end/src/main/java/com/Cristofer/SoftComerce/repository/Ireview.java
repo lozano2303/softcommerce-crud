@@ -10,21 +10,19 @@ import com.Cristofer.SoftComerce.model.review;
 
 public interface Ireview extends JpaRepository<review, Integer> {
 
-    // Obtener todas las reseñas activas (si existe un campo de estado, opcional)
-    @Query("SELECT r FROM review r WHERE r.status != false")
-    List<review> getActiveReviews();
-
-    // Filtrar reseñas por calificación, usuario y producto
+    // Filtrar reseñas por parámetros opcionales
     @Query("""
         SELECT r
         FROM review r
         WHERE (:rating IS NULL OR r.rating = :rating)
-            AND (:userId IS NULL OR r.user.userID = :userId)
-            AND (:productId IS NULL OR r.product.productID = :productId)
+            AND (:comment IS NULL OR r.comment LIKE %:comment%)
+            AND (:userID IS NULL OR r.user.userID = :userID)
+            AND (:productID IS NULL OR r.product.productID = :productID)
     """)
     List<review> filterReviews(
         @Param("rating") Integer rating,
-        @Param("userId") Integer userId,
-        @Param("productId") Integer productId
+        @Param("comment") String comment,
+        @Param("userID") Integer userID,
+        @Param("productID") Integer productID
     );
 }

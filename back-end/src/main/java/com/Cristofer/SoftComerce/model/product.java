@@ -7,10 +7,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity(name = "product")
-
-public class product{
+public class product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productID")
@@ -34,11 +35,16 @@ public class product{
     @Column(name = "image_url", columnDefinition = "LONGTEXT")
     private String imageUrl;
 
-    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private boolean status;
 
+    @ManyToOne
+    @JoinColumn(name = "categoryID", nullable = false)
+    private category category;
 
-    public product(int productID, String name, String description, double price, int stock, LocalDateTime createdAt, String imageUrl, boolean status) {
+    public product() {}
+
+    public product(int productID, String name, String description, double price, int stock, LocalDateTime createdAt, String imageUrl, boolean status, category category) {
         this.productID = productID;
         this.name = name;
         this.description = description;
@@ -47,13 +53,10 @@ public class product{
         this.createdAt = createdAt;
         this.imageUrl = imageUrl;
         this.status = status;
-
+        this.category = category;
     }
 
-    public product() {
-        // Inicializa los valores por defecto si es necesario
-    }
-
+    // Getters y Setters
     public int getProductID() {
         return productID;
     }
@@ -117,5 +120,12 @@ public class product{
     public void setStatus(boolean status) {
         this.status = status;
     }
-}
 
+    public category getCategory() {
+        return category;
+    }
+
+    public void setCategory(category category) {
+        this.category = category;
+    }
+}

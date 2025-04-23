@@ -1,15 +1,21 @@
 package com.Cristofer.SoftComerce.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Cristofer.SoftComerce.DTO.responseDTO;
 import com.Cristofer.SoftComerce.DTO.roleDTO;
 import com.Cristofer.SoftComerce.service.roleService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/role")
@@ -65,5 +71,14 @@ public class roleController {
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Filtrar roles por nombre
+    @GetMapping("/filter")
+    public ResponseEntity<Object> filterRoles(
+            @RequestParam(required = false, name = "roleName") String roleName) {
+        
+        var filteredRoles = roleService.filterRoles(roleName);
+        return new ResponseEntity<>(filteredRoles, HttpStatus.OK);
     }
 }

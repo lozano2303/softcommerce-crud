@@ -2,6 +2,7 @@ package com.Cristofer.SoftComerce.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,6 +70,20 @@ public class categoryService {
         data.delete(category.get()); // Eliminación física de la categoría
 
         return new responseDTO(HttpStatus.OK.toString(), "Categoría eliminada correctamente");
+    }
+
+    // ✅ Filtrar categorías por nombre
+    public List<category> filterCategory(String categoryName) {
+        List<category> allCategories = data.findAll();
+        
+        if (categoryName == null || categoryName.isEmpty()) {
+            return allCategories;
+        }
+        
+        // Filtrar categorías que contengan el texto proporcionado (case insensitive)
+        return allCategories.stream()
+                .filter(c -> c.getCategoryName().toLowerCase().contains(categoryName.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     // ✅ Validaciones

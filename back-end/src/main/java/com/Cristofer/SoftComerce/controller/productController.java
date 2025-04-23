@@ -32,7 +32,7 @@ public class productController {
     public ResponseEntity<Object> registerProduct(@RequestBody productDTO productDTO) {
         responseDTO response = productService.save(productDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -41,7 +41,8 @@ public class productController {
     // ✅ Obtener todos los productos
     @GetMapping("/")
     public ResponseEntity<Object> getAllProducts() {
-        return new ResponseEntity<>(productService.findAll(), HttpStatus.OK);
+        List<product> products = productService.findAll();
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     // ✅ Obtener un producto por ID
@@ -75,15 +76,16 @@ public class productController {
         }
     }
 
-    // ✅ Filtro de productos (por nombre, descripción, precio, status)
+    // ✅ Filtro de productos (por nombre, descripción, precio, estado, categoría)
     @GetMapping("/filter")
     public ResponseEntity<Object> filterProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Double price,
-            @RequestParam(required = false) Boolean status
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(required = false) Integer categoryID
     ) {
-        List<product> productList = productService.filterProducts(name, description, price, status);
+        List<product> productList = productService.filterProducts(name, description, price, status, categoryID);
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 }

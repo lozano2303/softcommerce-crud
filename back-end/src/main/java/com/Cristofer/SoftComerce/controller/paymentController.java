@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Cristofer.SoftComerce.DTO.paymentDTO;
@@ -72,5 +73,14 @@ public class paymentController {
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Filtrar pagos por método
+    @GetMapping("/filter")
+    public ResponseEntity<Object> filterPaymentsByMethod(
+            @RequestParam(required = false, name = "method") String method) {
+        
+        var paymentList = paymentService.filterPaymentsByMethod(method);
+        return new ResponseEntity<>(paymentList, HttpStatus.OK);
     }
 }

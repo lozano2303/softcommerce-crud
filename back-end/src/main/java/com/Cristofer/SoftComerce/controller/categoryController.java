@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Cristofer.SoftComerce.DTO.categoryDTO;
@@ -52,6 +53,14 @@ public class categoryController {
             return new ResponseEntity<>("Categoría no encontrada", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(category.get(), HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Object> filterCategory(
+        @RequestParam(required = false, name = "categoryName") String categoryName) {
+    
+    var categoryList = categoryService.filterCategory(categoryName);
+    return new ResponseEntity<>(categoryList, HttpStatus.OK);
     }
 
     // ✅ Actualizar categoría
