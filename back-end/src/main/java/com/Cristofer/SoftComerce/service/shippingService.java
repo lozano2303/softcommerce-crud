@@ -56,16 +56,16 @@ public class shippingService {
         // Validar que la orden exista
         Optional<order> orderOpt = orderRepo.findById(shippingDTO.getOrderID());
         if (!orderOpt.isPresent()) {
-            return new responseDTO("Orden no encontrada", "error");
+            return new responseDTO("error", "Orden no encontrada");
         }
 
         // Validaciones adicionales
         if (shippingDTO.getAddress().length() < 5 || shippingDTO.getAddress().length() > 100) {
-            return new responseDTO("La dirección debe tener entre 5 y 100 caracteres", "error");
+            return new responseDTO("error", "La dirección debe tener entre 5 y 100 caracteres");
         }
 
         if (shippingDTO.getCity().length() < 2 || shippingDTO.getCity().length() > 50) {
-            return new responseDTO("La ciudad debe tener entre 2 y 50 caracteres", "error");
+            return new responseDTO("error", "La ciudad debe tener entre 2 y 50 caracteres");
         }
 
         try {
@@ -73,11 +73,11 @@ public class shippingService {
             shipping shippingEntity = convertToModel(shippingDTO, orderOpt.get());
             shippingRepo.save(shippingEntity);
 
-            return new responseDTO("Envío registrado correctamente", "success");
+            return new responseDTO("success", "Envío registrado correctamente");
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al guardar el envío", "error");
+            return new responseDTO("error", "Error de base de datos al guardar el envío");
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al guardar el envío", "error");
+            return new responseDTO("error", "Error inesperado al guardar el envío");
         }
     }
 
@@ -86,22 +86,22 @@ public class shippingService {
     public responseDTO update(int id, shippingDTO shippingDTO) {
         Optional<shipping> existingShipping = findById(id);
         if (!existingShipping.isPresent()) {
-            return new responseDTO("Envío no encontrado", "error");
+            return new responseDTO("error", "Envío no encontrado");
         }
 
         // Validar que la orden exista
         Optional<order> orderOpt = orderRepo.findById(shippingDTO.getOrderID());
         if (!orderOpt.isPresent()) {
-            return new responseDTO("Orden no encontrada", "error");
+            return new responseDTO("error", "Orden no encontrada");
         }
 
         // Validaciones adicionales
         if (shippingDTO.getAddress().length() < 5 || shippingDTO.getAddress().length() > 100) {
-            return new responseDTO("La dirección debe tener entre 5 y 100 caracteres", "error");
+            return new responseDTO("error", "La dirección debe tener entre 5 y 100 caracteres");
         }
 
         if (shippingDTO.getCity().length() < 2 || shippingDTO.getCity().length() > 50) {
-            return new responseDTO("La ciudad debe tener entre 2 y 50 caracteres", "error");
+            return new responseDTO("error", "La ciudad debe tener entre 2 y 50 caracteres");
         }
 
         try {
@@ -116,11 +116,11 @@ public class shippingService {
 
             shippingRepo.save(shippingToUpdate);
 
-            return new responseDTO("Envío actualizado exitosamente", "success");
+            return new responseDTO("success", "Envío actualizado exitosamente");
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al actualizar el envío", "error");
+            return new responseDTO("error", "Error de base de datos al actualizar el envío");
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al actualizar el envío", "error");
+            return new responseDTO("error", "Error inesperado al actualizar el envío");
         }
     }
 
@@ -129,16 +129,16 @@ public class shippingService {
     public responseDTO deleteById(int id) {
         Optional<shipping> shippingEntity = findById(id);
         if (!shippingEntity.isPresent()) {
-            return new responseDTO("Envío no encontrado", "error");
+            return new responseDTO("error", "Envío no encontrado");
         }
 
         try {
             shippingRepo.deleteById(id);
-            return new responseDTO("Envío eliminado correctamente", "success");
+            return new responseDTO("success", "Envío eliminado correctamente");
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al eliminar el envío", "error");
+            return new responseDTO("error", "Error de base de datos al eliminar el envío");
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al eliminar el envío", "error");
+            return new responseDTO("error", "Error inesperado al eliminar el envío");
         }
     }
 
