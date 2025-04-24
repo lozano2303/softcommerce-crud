@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Cristofer.SoftComerce.DTO.loginDTO;
 import com.Cristofer.SoftComerce.DTO.responseDTO;
 import com.Cristofer.SoftComerce.DTO.userDTO;
 import com.Cristofer.SoftComerce.service.userService;
-
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -26,13 +26,24 @@ public class userController {
     private userService userService;
 
     // Registrar un nuevo usuario
-    @PostMapping("/")
+    @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestBody userDTO userDTO) {
-        responseDTO response = userService.save(userDTO);
-        if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        responseDTO response = userService.register(userDTO);
+        if ("success".equals(response.getStatus())) {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Iniciar sesión
+    @PostMapping("/login")
+    public ResponseEntity<Object> loginUser(@RequestBody loginDTO loginDTO) {
+        responseDTO response = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
+        if ("success".equals(response.getStatus())) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -56,7 +67,7 @@ public class userController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable int id) {
         responseDTO response = userService.deleteById(id);
-        if (response.getStatus().equals(HttpStatus.OK.toString())) {
+        if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

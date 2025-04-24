@@ -1,12 +1,16 @@
 package com.Cristofer.SoftComerce.service;
 
+import java.security.Key;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +21,17 @@ import com.Cristofer.SoftComerce.model.user;
 import com.Cristofer.SoftComerce.repository.Irole;
 import com.Cristofer.SoftComerce.repository.Iuser;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @Service
 public class userService {
 
     @Autowired
     private Iuser userRepository;
+
+    private static final String SECRET_KEY = "mi-clave-secreta-muy-segura"; // Cambia por una clave segura
+
 
     @Autowired
     private Irole roleRepository;
@@ -46,13 +56,18 @@ public class userService {
         return userRepository.filterUser(name, email, status);
     }
 
-    // Guardar usuario con validaciones
+    // **Registro de usuario**
     @Transactional
-    public responseDTO save(userDTO userDTO) {
+    public responseDTO register(userDTO userDTO) {
         // Validar que el rol exista
         Optional<role> roleEntity = roleRepository.findById(userDTO.getRoleID());
         if (!roleEntity.isPresent()) {
             return new responseDTO("Rol no encontrado", "error");
+        }
+
+        // Verificar si el correo ya está registrado
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            return new responseDTO("El correo electrónico ya está registrado", "error");
         }
 
         // Validaciones adicionales
@@ -82,51 +97,41 @@ public class userService {
         }
     }
 
-    // Actualizar usuario por ID
-    @Transactional
-    public responseDTO update(int id, userDTO userDTO) {
-        Optional<user> existingUser = findById(id);
-        if (!existingUser.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El usuario no existe");
+    // **Inicio de sesión**
+    public responseDTO login(String email, String password) {
+        // Buscar al usuario por correo
+        Optional<user> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return new responseDTO("El correo electrónico no está registrado", "error");
         }
 
-        // Validar que el rol exista
-        Optional<role> roleEntity = roleRepository.findById(userDTO.getRoleID());
-        if (!roleEntity.isPresent()) {
-            return new responseDTO("Rol no encontrado", "error");
+        user userEntity = optionalUser.get();
+
+        // Verificar la contraseña hasheada (usa BCrypt)
+        if (!BCrypt.checkpw(password, userEntity.getPassword())) {
+            return new responseDTO("La contraseña es incorrecta", "error");
         }
 
-        // Validaciones adicionales
-        if (userDTO.getName().length() < 1 || userDTO.getName().length() > 50) {
-            return new responseDTO("El nombre debe estar entre 1 y 50 caracteres", "error");
-        }
+        // Generar un token
+        String token = generateToken(userEntity);
 
-        if (!userDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            return new responseDTO("El formato del correo electrónico no es válido", "error");
-        }
-
-        if (userDTO.getPassword().length() < 8) {
-            return new responseDTO("La contraseña debe tener al menos 8 caracteres", "error");
-        }
-
-        try {
-            // Actualizar datos del usuario
-            user userToUpdate = existingUser.get();
-            userToUpdate.setName(userDTO.getName());
-            userToUpdate.setEmail(userDTO.getEmail());
-            userToUpdate.setPassword(userDTO.getPassword());
-            userToUpdate.setRoleID(roleEntity.get());
-            userToUpdate.setCreatedAt(LocalDateTime.now());
-
-            userRepository.save(userToUpdate);
-
-            return new responseDTO("Usuario actualizado exitosamente", "success");
-        } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al actualizar el usuario", "error");
-        } catch (Exception e) {
-            return new responseDTO("Error inesperado al actualizar el usuario", "error");
-        }
+        // Si las credenciales son correctas, devolver un éxito con el token
+        return new responseDTO("Inicio de sesión exitoso", "success", token);
     }
+
+    // Método para generar un token (JWT)
+    private String generateToken(user userEntity) {
+    // Crear la clave secreta
+    Key key = new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName());
+
+    // Generar el token JWT
+    return Jwts.builder()
+            .setSubject(userEntity.getEmail())
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora de validez
+            .signWith(key, SignatureAlgorithm.HS512) // Usar la clave y el algoritmo
+            .compact();
+}
 
     // Eliminar usuario por ID
     @Transactional
@@ -167,10 +172,14 @@ public class userService {
             0, // ID autogenerado
             userDTO.getName(),
             userDTO.getEmail(),
-            userDTO.getPassword(),
+            BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt()), // Contraseña cifrada
             true, // Estado inicial como true
             LocalDateTime.now(),
             roleEntity.get()
         );
+    }
+
+    public responseDTO update(int id, userDTO userDTO) {
+        throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 }
