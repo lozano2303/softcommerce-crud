@@ -86,13 +86,13 @@ public class userController {
     }
 
     // Actualizar un usuario por su ID
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable int id, @RequestBody userDTO userDTO) {
-        responseDTO response = userService.update(id, userDTO);
-        if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        @PutMapping("/{id}")
+        public ResponseEntity<responseDTO> updateUser(@PathVariable int id, @RequestBody userDTO userDTO) {
+            responseDTO response = userService.update(id, userDTO);
+            if ("success".equals(response.getStatus())) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.badRequest().body(response);
+            }
         }
     }
-}

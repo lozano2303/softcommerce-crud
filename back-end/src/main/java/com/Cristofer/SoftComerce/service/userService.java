@@ -149,6 +149,63 @@ public class userService {
         }
     }
 
+    // Actualizar usuario por ID
+@Transactional
+public responseDTO update(int id, userDTO userDTO) {
+    // Buscar el usuario por ID en la base de datos
+    Optional<user> userOptional = userRepository.findById(id);
+
+    if (!userOptional.isPresent()) {
+        // Si el usuario no existe, devolver un mensaje de error
+        return new responseDTO("error", "Usuario no encontrado");
+    }
+
+    try {
+        user userEntity = userOptional.get();
+
+        // Validar que el rol exista
+        Optional<role> roleEntity = roleRepository.findById(userDTO.getRoleID());
+        if (!roleEntity.isPresent()) {
+            return new responseDTO("error", "Rol no encontrado");
+        }
+
+        // Actualizar los campos del usuario con los valores del DTO
+        if (userDTO.getName() != null && !userDTO.getName().isEmpty()) {
+            if (userDTO.getName().length() < 1 || userDTO.getName().length() > 50) {
+                return new responseDTO("error", "El nombre debe estar entre 1 y 50 caracteres");
+            }
+            userEntity.setName(userDTO.getName());
+        }
+
+        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+            if (!userDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+                return new responseDTO("error", "El formato del correo electrónico no es válido");
+            }
+            userEntity.setEmail(userDTO.getEmail());
+        }
+
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+            if (userDTO.getPassword().length() < 8) {
+                return new responseDTO("error", "La contraseña debe tener al menos 8 caracteres");
+            }
+            userEntity.setPassword(BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt()));
+        }
+
+        // Actualizar el rol
+        userEntity.setRoleID(roleEntity.get());
+
+        // Guardar los cambios en la base de datos
+        userRepository.save(userEntity);
+
+        // Devolver una respuesta indicando éxito
+        return new responseDTO("success", "Usuario actualizado correctamente");
+    } catch (DataAccessException e) {
+        return new responseDTO("error", "Error de base de datos al actualizar el usuario");
+    } catch (Exception e) {
+        return new responseDTO("error", "Error inesperado al actualizar el usuario");
+    }
+}
+
     // Convertir entidad a DTO
     public userDTO convertToDTO(user userEntity) {
         return new userDTO(
@@ -175,9 +232,5 @@ public class userService {
                 LocalDateTime.now(),
                 roleEntity.get()
         );
-    }
-
-    public responseDTO update(int id, userDTO userDTO) {
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 }

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Productos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .crud-title {
+            border-left: 4px solid #59ab6e;
+            padding-left: 10px;
+        }
+        .action-column {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container">
+            <a class="navbar-brand text-white" href="dashboard.html">SoftComerce Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">Ir a la tienda</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user me-1"></i> Mi cuenta
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configuración</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 bg-light sidebar py-4">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action active">
+                        <i class="fa fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    <a href="users.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-users me-2"></i> Usuarios
+                    </a>
+                    <a href="roles.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-user-tag me-2"></i> Roles
+                    </a>
+                    <a href="product.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box me-2"></i> Productos
+                    </a>
+                    <a href="orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-shopping-cart me-2"></i> Pedidos
+                    </a>
+                    <a href="product-orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box-open me-2"></i> Productos Pedidos
+                    </a>
+                    <a href="payment-order.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-file-invoice-dollar me-2"></i> Orden de Pago
+                    </a>
+                    <a href="paid.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-money-bill-wave me-2"></i> Pagados
+                    </a>
+                    <a href="categories.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tags me-2"></i> Categorías
+                    </a>
+                    <a href="reviews.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-star me-2"></i> Reseñas
+                    </a>
+                    <a href="shipping.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-truck me-2"></i> Envíos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="crud-title">Gestión de Productos</h2>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        <i class="fa fa-plus me-2"></i> Nuevo Producto
+                    </button>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Buscar productos...">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select">
+                                    <option selected>Todas las categorías</option>
+                                    <option>Tecnología</option>
+                                    <option>Zapatería</option>
+                                    <option>Automotriz</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Imagen</th>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th class="action-column">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><img src="assets/img/zte-RM.png" width="50" height="50" alt="ZTE"></td>
+                                        <td>REDMAGIC 10 Pro Gaming</td>
+                                        <td>Tecnología</td>
+                                        <td>$5.000.000</td>
+                                        <td>15</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger me-1"><i class="fa fa-trash"></i></button>
+                                            <button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><img src="assets/img/torre.png" width="50" height="50" alt="Chasis"></td>
+                                        <td>Chasis Caja Iceberg Turbo Z8</td>
+                                        <td>Tecnología</td>
+                                        <td>$2.350.000</td>
+                                        <td>8</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger me-1"><i class="fa fa-trash"></i></button>
+                                            <button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><img src="assets/img/intel-core-i9.png" width="50" height="50" alt="Intel"></td>
+                                        <td>Intel Core i9-12900KF</td>
+                                        <td>Tecnología</td>
+                                        <td>$49.800</td>
+                                        <td>22</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger me-1"><i class="fa fa-trash"></i></button>
+                                            <button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <nav>
+                            <ul class="pagination justify-content-center mt-3">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Siguiente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Agregar Nuevo Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productName" class="form-label">Nombre del Producto</label>
+                                <input type="text" class="form-control" id="productName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productCategory" class="form-label">Categoría</label>
+                                <select class="form-select" id="productCategory" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="1">Tecnología</option>
+                                    <option value="2">Zapatería</option>
+                                    <option value="3">Automotriz</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productPrice" class="form-label">Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="productPrice" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productStock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="productStock" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Imagen del Producto</label>
+                            <input type="file" class="form-control" id="productImage">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success">Guardar Producto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and other scripts -->
+    <script src="assets/js/jquery-1.11.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/templatemo.js"></script>
+    <script src="assets/js/custom.js"></script>
+</body>
+</html>
