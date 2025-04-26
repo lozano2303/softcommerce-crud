@@ -18,6 +18,19 @@
             min-height: calc(100vh - 56px);
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        /* Estilos adicionales para cards */
+        .card {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .icon-large {
+            font-size: 2.5rem;
+            color: #59ab6e;
+        }
     </style>
 </head>
 <body>
@@ -94,6 +107,93 @@
             <div class="col-md-9 col-lg-10 py-4">
                 <h1>Bienvenido al Dashboard</h1>
                 <p>Aquí puedes gestionar las diferentes secciones del sistema SoftComerce.</p>
+
+                <!-- Cards para las entidades principales -->
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fa fa-users icon-large"></i>
+                                </div>
+                                <div>
+                                    <h5>Usuarios</h5>
+                                    <p class="mb-0">Gestiona los usuarios registrados en el sistema.</p>
+                                    <a href="users.html" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fa fa-user-tag icon-large"></i>
+                                </div>
+                                <div>
+                                    <h5>Roles</h5>
+                                    <p class="mb-0">Define y administra roles de usuario.</p>
+                                    <a href="roles.html" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fa fa-box icon-large"></i>
+                                </div>
+                                <div>
+                                    <h5>Productos</h5>
+                                    <p class="mb-0">Agrega, edita y elimina productos.</p>
+                                    <a href="product.html" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fa fa-shopping-cart icon-large"></i>
+                                </div>
+                                <div>
+                                    <h5>Pedidos</h5>
+                                    <p class="mb-0">Consulta y administra los pedidos realizados.</p>
+                                    <a href="orders.html" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fa fa-tags icon-large"></i>
+                                </div>
+                                <div>
+                                    <h5>Categorías</h5>
+                                    <p class="mb-0">Organiza los productos por categorías.</p>
+                                    <a href="categories.html" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de instrucciones -->
+                <div class="mt-5">
+                    <h3>Instrucciones</h3>
+                    <p>Este sistema permite gestionar las siguientes entidades:</p>
+                    <ul>
+                        <li><strong>Usuarios:</strong> Administración de cuentas de usuario, incluyendo creación, edición y eliminación.</li>
+                        <li><strong>Roles:</strong> Definición de permisos y asignación de roles a los usuarios.</li>
+                        <li><strong>Productos:</strong> Gestión del inventario de productos disponibles.</li>
+                        <li><strong>Pedidos:</strong> Control de las órdenes realizadas por los clientes.</li>
+                        <li><strong>Categorías:</strong> Clasificación de los productos en categorías específicas.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
