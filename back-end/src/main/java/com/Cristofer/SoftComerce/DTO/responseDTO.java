@@ -1,12 +1,15 @@
 package com.Cristofer.SoftComerce.DTO;
 
+import com.Cristofer.SoftComerce.model.user;
+
 public class responseDTO {
 
-    private String status;
-    private String message;
+    private String status; // Estado de la respuesta (success o error)
+    private String message; // Mensaje descriptivo
     private String token; // Campo opcional para incluir un token
+    private user user; // Campo opcional para información del usuario
 
-    // Constructor para respuestas sin token
+    // Constructor para respuestas sin token ni usuario
     public responseDTO(String status, String message) {
         this.status = status;
         this.message = message;
@@ -19,6 +22,15 @@ public class responseDTO {
         this.token = token;
     }
 
+    // Constructor para respuestas con token y usuario
+    public responseDTO(String status, String message, String token, user user) {
+        this.status = status;
+        this.message = message;
+        this.token = token;
+        this.user = user;
+    }
+
+    // Getters y setters
     public String getStatus() {
         return status;
     }
@@ -41,5 +53,13 @@ public class responseDTO {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public user getUser() {
+        return user;
+    }
+
+    public void setUser(user user) {
+        this.user = user;
     }
 }

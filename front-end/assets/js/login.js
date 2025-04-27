@@ -45,6 +45,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Verificar si el usuario está inactivo
+            if (data.user && data.user.status === false) {
+                alert("El usuario está inactivo. Comuníquese con el administrador.");
+                return; // Detener flujo si el usuario está inactivo
+            }
+
             // Si el inicio de sesión es exitoso
             console.log("Inicio de sesión exitoso. Datos:", data);
 

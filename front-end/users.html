@@ -147,6 +147,33 @@
             <i class="fa fa-plus me-2"></i> Nuevo Usuario
         </button>
     </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar usuarios...">
+                </div>
+                <div class="col-md-3">
+                    <select id="statusFilter" class="form-select">
+                        <option selected value="">Todos los estados</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="roleFilter" class="form-select">
+                        <option selected value="">Todos los roles</option>
+                        <!-- Opciones dinámicas generadas por JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     
 <!-- Users Table -->
 <div class="card">

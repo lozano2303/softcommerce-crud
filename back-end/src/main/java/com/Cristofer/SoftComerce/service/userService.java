@@ -111,11 +111,16 @@ public class userService {
             return new responseDTO("error", "La contraseña es incorrecta");
         }
 
+        // Verificar si el usuario está activo
+        if (!userEntity.isStatus()) {
+            return new responseDTO("error", "El usuario está inactivo. Comuníquese con el administrador.");
+        }
+
         // Generar un token
         String token = generateToken(userEntity);
 
-        // Si las credenciales son correctas, devolver un éxito con el token
-        return new responseDTO("success", "Inicio de sesión exitoso", token);
+        // Si las credenciales son correctas, devolver un éxito con el token y el usuario
+        return new responseDTO("success", "Inicio de sesión exitoso", token, userEntity);
     }
 
     private String generateToken(user userEntity) {
@@ -134,77 +139,111 @@ public class userService {
     // Eliminar usuario por ID
     @Transactional
     public responseDTO deleteById(int id) {
+        // Buscar el usuario por ID
         Optional<user> userEntity = findById(id);
+        if (!userEntity.isPresent()) {
+            return new responseDTO("error", "Usuario no encontrado");
+        }
+    
+        try {
+            user userToDelete = userEntity.get();
+    
+            // Cambiar el estatus del usuario a false (borrado lógico)
+            userToDelete.setStatus(false);
+    
+            // Guardar el cambio en la base de datos
+            userRepository.save(userToDelete);
+    
+            return new responseDTO("success", "Usuario deshabilitado correctamente");
+        } catch (DataAccessException e) {
+            return new responseDTO("error", "Error de base de datos al deshabilitar el usuario");
+        } catch (Exception e) {
+            return new responseDTO("error", "Error inesperado al deshabilitar el usuario");
+        }
+    }
+
+    // **Reactivar usuario por ID**
+    @Transactional
+    public responseDTO reactivateUser(int id) {
+        // Buscar el usuario por ID
+        Optional<user> userEntity = userRepository.findById(id);
         if (!userEntity.isPresent()) {
             return new responseDTO("error", "Usuario no encontrado");
         }
 
         try {
-            userRepository.deleteById(id);
-            return new responseDTO("success", "Usuario eliminado correctamente");
+            user userToReactivate = userEntity.get();
+
+            // Cambiar el estatus del usuario a true (reactivar)
+            userToReactivate.setStatus(true);
+
+            // Guardar el cambio en la base de datos
+            userRepository.save(userToReactivate);
+
+            return new responseDTO("success", "Usuario reactivado correctamente");
         } catch (DataAccessException e) {
-            return new responseDTO("error", "Error de base de datos al eliminar el usuario");
+            return new responseDTO("error", "Error de base de datos al reactivar el usuario");
         } catch (Exception e) {
-            return new responseDTO("error", "Error inesperado al eliminar el usuario");
+            return new responseDTO("error", "Error inesperado al reactivar el usuario");
         }
     }
 
     // Actualizar usuario por ID
-@Transactional
-public responseDTO update(int id, userDTO userDTO) {
-    // Buscar el usuario por ID en la base de datos
-    Optional<user> userOptional = userRepository.findById(id);
+    @Transactional
+    public responseDTO update(int id, userDTO userDTO) {
+        // Buscar el usuario por ID en la base de datos
+        Optional<user> userOptional = userRepository.findById(id);
 
-    if (!userOptional.isPresent()) {
-        // Si el usuario no existe, devolver un mensaje de error
-        return new responseDTO("error", "Usuario no encontrado");
+        if (!userOptional.isPresent()) {
+            // Si el usuario no existe, devolver un mensaje de error
+            return new responseDTO("error", "Usuario no encontrado");
+        }
+
+        try {
+            user userEntity = userOptional.get();
+
+            // Validar que el rol exista
+            Optional<role> roleEntity = roleRepository.findById(userDTO.getRoleID());
+            if (!roleEntity.isPresent()) {
+                return new responseDTO("error", "Rol no encontrado");
+            }
+
+            // Actualizar los campos del usuario con los valores del DTO
+            if (userDTO.getName() != null && !userDTO.getName().isEmpty()) {
+                if (userDTO.getName().length() < 1 || userDTO.getName().length() > 50) {
+                    return new responseDTO("error", "El nombre debe estar entre 1 y 50 caracteres");
+                }
+                userEntity.setName(userDTO.getName());
+            }
+
+            if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+                if (!userDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+                    return new responseDTO("error", "El formato del correo electrónico no es válido");
+                }
+                userEntity.setEmail(userDTO.getEmail());
+            }
+
+            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+                if (userDTO.getPassword().length() < 8) {
+                    return new responseDTO("error", "La contraseña debe tener al menos 8 caracteres");
+                }
+                userEntity.setPassword(BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt()));
+            }
+
+            // Actualizar el rol
+            userEntity.setRoleID(roleEntity.get());
+
+            // Guardar los cambios en la base de datos
+            userRepository.save(userEntity);
+
+            // Devolver una respuesta indicando éxito
+            return new responseDTO("success", "Usuario actualizado correctamente");
+        } catch (DataAccessException e) {
+            return new responseDTO("error", "Error de base de datos al actualizar el usuario");
+        } catch (Exception e) {
+            return new responseDTO("error", "Error inesperado al actualizar el usuario");
+        }
     }
-
-    try {
-        user userEntity = userOptional.get();
-
-        // Validar que el rol exista
-        Optional<role> roleEntity = roleRepository.findById(userDTO.getRoleID());
-        if (!roleEntity.isPresent()) {
-            return new responseDTO("error", "Rol no encontrado");
-        }
-
-        // Actualizar los campos del usuario con los valores del DTO
-        if (userDTO.getName() != null && !userDTO.getName().isEmpty()) {
-            if (userDTO.getName().length() < 1 || userDTO.getName().length() > 50) {
-                return new responseDTO("error", "El nombre debe estar entre 1 y 50 caracteres");
-            }
-            userEntity.setName(userDTO.getName());
-        }
-
-        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
-            if (!userDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-                return new responseDTO("error", "El formato del correo electrónico no es válido");
-            }
-            userEntity.setEmail(userDTO.getEmail());
-        }
-
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
-            if (userDTO.getPassword().length() < 8) {
-                return new responseDTO("error", "La contraseña debe tener al menos 8 caracteres");
-            }
-            userEntity.setPassword(BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt()));
-        }
-
-        // Actualizar el rol
-        userEntity.setRoleID(roleEntity.get());
-
-        // Guardar los cambios en la base de datos
-        userRepository.save(userEntity);
-
-        // Devolver una respuesta indicando éxito
-        return new responseDTO("success", "Usuario actualizado correctamente");
-    } catch (DataAccessException e) {
-        return new responseDTO("error", "Error de base de datos al actualizar el usuario");
-    } catch (Exception e) {
-        return new responseDTO("error", "Error inesperado al actualizar el usuario");
-    }
-}
 
     // Convertir entidad a DTO
     public userDTO convertToDTO(user userEntity) {

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,6 +43,8 @@ public class userController {
         responseDTO response = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
         if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
+        } else if ("error".equals(response.getStatus()) && "El usuario está inactivo. Comuníquese con el administrador.".equals(response.getMessage())) {
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
@@ -63,10 +66,21 @@ public class userController {
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-    // Eliminar un usuario por su ID
+    // Eliminar un usuario por su ID (deshabilitar)
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable int id) {
         responseDTO response = userService.deleteById(id);
+        if ("success".equals(response.getStatus())) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Reactivar un usuario por su ID
+    @PatchMapping("/{id}/reactivate")
+    public ResponseEntity<Object> reactivateUser(@PathVariable int id) {
+        responseDTO response = userService.reactivateUser(id);
         if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -86,13 +100,13 @@ public class userController {
     }
 
     // Actualizar un usuario por su ID
-        @PutMapping("/{id}")
-        public ResponseEntity<responseDTO> updateUser(@PathVariable int id, @RequestBody userDTO userDTO) {
-            responseDTO response = userService.update(id, userDTO);
-            if ("success".equals(response.getStatus())) {
-                return ResponseEntity.ok(response);
-            } else {
-                return ResponseEntity.badRequest().body(response);
-            }
+    @PutMapping("/{id}")
+    public ResponseEntity<responseDTO> updateUser(@PathVariable int id, @RequestBody userDTO userDTO) {
+        responseDTO response = userService.update(id, userDTO);
+        if ("success".equals(response.getStatus())) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
         }
     }
+}
