@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -76,6 +77,21 @@ public class productController {
         }
     }
 
+    // ✅ Actualizar estado del producto (activar/desactivar)
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Object> updateProductStatus(@PathVariable int id, @RequestParam boolean status) {
+        responseDTO response = productService.updateProductStatus(id, status);
+        if (response.getStatus().equals("200 OK")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PatchMapping("/{id}/reactivate")
+    public ResponseEntity<Object> reactivateProduct(@PathVariable int id) {
+        return updateProductStatus(id, true); // Reutilizar updateProductStatus para reactivar
+    }
     // ✅ Filtro de productos (por nombre, descripción, precio, estado, categoría)
     @GetMapping("/filter")
     public ResponseEntity<Object> filterProducts(

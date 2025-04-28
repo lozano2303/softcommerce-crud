@@ -10,17 +10,15 @@ import com.Cristofer.SoftComerce.model.product;
 
 public interface Iproduct extends JpaRepository<product, Integer> {
 
-    @Query("SELECT p FROM product p WHERE " +
-            "(:name IS NULL OR p.name LIKE %:name%) AND " +
-            "(:description IS NULL OR p.description LIKE %:description%) AND " +
-            "(:price IS NULL OR p.price = :price) AND " +
-            "(:status IS NULL OR p.status = :status) AND " +
-            "(:categoryID IS NULL OR p.category.categoryID = :categoryID)")
-    List<product> filterProducts(
-        @Param("name") String name,
-        @Param("description") String description,
-        @Param("price") Double price,
-        @Param("status") Boolean status,
-        @Param("categoryID") Integer categoryID
-    );
+    @Query("SELECT p FROM product p WHERE "
+         + "(:name IS NULL OR p.name LIKE %:name%) AND "
+         + "(:category IS NULL OR p.category.categoryName LIKE %:category%) AND "
+         + "(:price IS NULL OR p.price = :price) AND "
+         + "(:status IS NULL OR p.status = :status) AND "
+         + "(:stock IS NULL OR p.stock = :stock)")
+    List<product> filterProducts(@Param("name") String name,
+                                  @Param("category") String category,
+                                  @Param("price") Double price,
+                                  @Param("status") Boolean status,
+                                  @Param("stock") Integer stock);
 }

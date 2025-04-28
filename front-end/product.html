@@ -23,7 +23,21 @@
             padding-left: 10px;
         }
         .action-column {
-            width: 150px;
+            width: 180px;
+        }
+        .status-active {
+            color: #28a745;
+            font-weight: 500;
+        }
+        .status-inactive {
+            color: #dc3545;
+            font-weight: 500;
+        }
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -105,26 +119,35 @@
                         <i class="fa fa-plus me-2"></i> Nuevo Producto
                     </button>
                 </div>
-                
+
                 <!-- Search Bar -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Buscar productos...">
+                        <form id="filterForm">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre...">
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="categoryFilter">
+                                        <option value="">Todas las categorías</option>
+                                        <!-- Opciones dinámicas generadas por JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">Todos los estados</option>
+                                        <option value="activo">Activo</option>
+                                        <option value="inactivo">Inactivo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-primary w-100" id="searchButton">
+                                        <i class="fa fa-search"></i> Buscar
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <select class="form-select">
-                                    <option selected>Todas las categorías</option>
-                                    <option>Tecnología</option>
-                                    <option>Zapatería</option>
-                                    <option>Automotriz</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-primary w-100">Buscar</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 
@@ -141,67 +164,15 @@
                                         <th>Categoría</th>
                                         <th>Precio</th>
                                         <th>Stock</th>
+                                        <th>Estado</th>
                                         <th class="action-column">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td><img src="assets/img/zte-RM.png" width="50" height="50" alt="ZTE"></td>
-                                        <td>REDMAGIC 10 Pro Gaming</td>
-                                        <td>Tecnología</td>
-                                        <td>$5.000.000</td>
-                                        <td>15</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger me-1"><i class="fa fa-trash"></i></button>
-                                            <button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td><img src="assets/img/torre.png" width="50" height="50" alt="Chasis"></td>
-                                        <td>Chasis Caja Iceberg Turbo Z8</td>
-                                        <td>Tecnología</td>
-                                        <td>$2.350.000</td>
-                                        <td>8</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger me-1"><i class="fa fa-trash"></i></button>
-                                            <button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td><img src="assets/img/intel-core-i9.png" width="50" height="50" alt="Intel"></td>
-                                        <td>Intel Core i9-12900KF</td>
-                                        <td>Tecnología</td>
-                                        <td>$49.800</td>
-                                        <td>22</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger me-1"><i class="fa fa-trash"></i></button>
-                                            <button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
-                                        </td>
-                                    </tr>
+                                <tbody id="productsTableBody">
+                                    <!-- Las filas se generarán dinámicamente con JavaScript -->
                                 </tbody>
                             </table>
                         </div>
-                        
-                        <!-- Pagination -->
-                        <nav>
-                            <ul class="pagination justify-content-center mt-3">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Siguiente</a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                 </div>
             </div>
@@ -212,62 +183,105 @@
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Agregar Nuevo Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addProductModalLabel"><i class="fa fa-plus me-2"></i> Agregar Nuevo Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="productName" class="form-label">Nombre del Producto</label>
-                                <input type="text" class="form-control" id="productName" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="productCategory" class="form-label">Categoría</label>
-                                <select class="form-select" id="productCategory" required>
-                                    <option value="">Seleccionar categoría</option>
-                                    <option value="1">Tecnología</option>
-                                    <option value="2">Zapatería</option>
-                                    <option value="3">Automotriz</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="productPrice" class="form-label">Precio</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="productPrice" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="productStock" class="form-label">Stock</label>
-                                <input type="number" class="form-control" id="productStock" required>
-                            </div>
+                    <form id="addProductForm">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="productName" placeholder="Nombre del producto" required>
                         </div>
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Descripción</label>
-                            <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                            <textarea class="form-control" id="productDescription" rows="3" placeholder="Descripción del producto" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="productImage" class="form-label">Imagen del Producto</label>
-                            <input type="file" class="form-control" id="productImage">
+                            <label for="productPrice" class="form-label">Precio</label>
+                            <input type="number" class="form-control" id="productPrice" step="0.01" placeholder="Precio del producto" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="productStock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="productStock" placeholder="Cantidad en stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Categoría</label>
+                            <select class="form-select" id="productCategory" required>
+                                <!-- Opciones generadas dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImageUrl" class="form-label">URL de Imagen</label>
+                            <input type="url" class="form-control" id="productImageUrl" placeholder="https://example.com/image.jpg" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar Producto</button>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Guardar Producto</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editProductModalLabel"><i class="fa fa-edit me-2"></i> Editar Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm">
+                        <input type="hidden" id="editProductId">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editProductName" class="form-label">Nombre del Producto</label>
+                                <input type="text" class="form-control" id="editProductName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editProductCategory" class="form-label">Categoría</label>
+                                <select class="form-select" id="editProductCategory" required>
+                                    <option value="">Seleccionar categoría</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editProductPrice" class="form-label">Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="editProductPrice" min="0" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editProductStock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="editProductStock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="editProductDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductImageUrl" class="form-label">URL de Imagen del Producto</label>
+                            <input type="url" class="form-control" id="editProductImageUrl" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap and other scripts -->
     <script src="assets/js/jquery-1.11.0.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/templatemo.js"></script>
     <script src="assets/js/custom.js"></script>
+    
+    <!-- Product Management Script -->
+    <script src="assets/js/product.js"></script>
 </body>
 </html>

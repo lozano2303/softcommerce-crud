@@ -8,7 +8,7 @@ public class productDTO {
     private double price;
     private int stock;
 
-    @JsonProperty("imgUrl")
+    @JsonProperty("image_url")
     private String imageUrl;
 
     private int categoryID;

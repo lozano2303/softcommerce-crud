@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Categorías</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .crud-title {
+            border-left: 4px solid #59ab6e;
+            padding-left: 10px;
+        }
+        .action-column {
+            width: 150px;
+        }
+        /* Estilos del modal */
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .modal-header {
+            background-color: #59ab6e;
+            color: white;
+        }
+        .modal-body .form-control {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .modal-body .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(89, 171, 110, 0.25);
+            border-color: #59ab6e;
+        }
+        .modal-body .btn-primary {
+            background-color: #59ab6e;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .modal-body .btn-primary:hover {
+            background-color: #4c9d5e;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container">
+            <a class="navbar-brand text-white" href="dashboard.html">SoftComerce Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">Ir a la tienda</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user me-1"></i> Mi cuenta
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configuración</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 bg-light sidebar py-4">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    <a href="users.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-users me-2"></i> Usuarios
+                    </a>
+                    <a href="roles.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-user-tag me-2"></i> Roles
+                    </a>
+                    <a href="product.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box me-2"></i> Productos
+                    </a>
+                    <a href="orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-shopping-cart me-2"></i> Pedidos
+                    </a>
+                    <a href="product-orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box-open me-2"></i> Productos Pedidos
+                    </a>
+                    <a href="payment-order.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-file-invoice-dollar me-2"></i> Orden de Pago
+                    </a>
+                    <a href="paid.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-money-bill-wave me-2"></i> Pagados
+                    </a>
+                    <a href="categories.html" class="list-group-item list-group-item-action active">
+                        <i class="fa fa-tags me-2"></i> Categorías
+                    </a>
+                    <a href="reviews.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-star me-2"></i> Reseñas
+                    </a>
+                    <a href="shipping.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-truck me-2"></i> Envíos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="crud-title">Gestión de Categorías</h2>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                        <i class="fa fa-plus me-2"></i> Nueva Categoría
+                    </button>
+                </div>
+
+                <!-- Categories Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre de Categoría</th>
+                                        <th class="action-column">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoriesTableBody">
+                                    <!-- Filas dinámicas generadas por JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para editar categoría -->
+                <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="editCategoryModalLabel">
+                                    <i class="fa fa-edit me-2"></i> Editar Categoría
+                                </h5>
+                                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editCategoryForm">
+                                    <input type="hidden" id="editCategoryID"> <!-- Campo oculto para el ID de la categoría -->
+                                    <div class="mb-3">
+                                        <label for="editCategoryName" class="form-label">Nombre de Categoría</label>
+                                        <input type="text" class="form-control" id="editCategoryName" placeholder="Ingrese el nombre de la categoría" required>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para registrar una nueva categoría -->
+                <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="addCategoryModalLabel">
+                                    <i class="fa fa-tags me-2"></i> Crear Categoría
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="registerCategoryForm">
+                                    <div class="mb-3">
+                                        <label for="registerCategoryName" class="form-label">Nombre de Categoría</label>
+                                        <input type="text" class="form-control" id="registerCategoryName" placeholder="Ingrese el nombre de la categoría" required>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">Registrar Categoría</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and other scripts -->
+    <script src="assets/js/jquery-1.11.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/templatemo.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <script src="assets/js/category.js"></script>
+</body>
+</html>

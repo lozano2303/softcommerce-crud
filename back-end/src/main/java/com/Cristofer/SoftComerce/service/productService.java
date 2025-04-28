@@ -47,6 +47,10 @@ public class productService {
         return productRepository.findAll();
     }
 
+    public List<product> filterProducts(String name, String category, Double price, Boolean status, Integer stock) {
+        return productRepository.filterProducts(name, category, price, status, stock);
+    }
+
     // ✅ Buscar producto por ID
     public Optional<product> findById(int id) {
         return productRepository.findById(id);
@@ -66,38 +70,53 @@ public class productService {
         return new responseDTO(HttpStatus.OK.toString(), "Producto eliminado correctamente");
     }
 
+    // ✅ Reactivar producto
+
+    public responseDTO updateProductStatus(int id, boolean status) {
+        Optional<product> optionalProduct = productRepository.findById(id);
+        if (!optionalProduct.isPresent()) {
+            return new responseDTO("400 BAD_REQUEST", "El producto no existe");
+        }
+
+        product productToUpdate = optionalProduct.get();
+        productToUpdate.setStatus(status);
+        productRepository.save(productToUpdate);
+
+        String message = status ? "Producto activado correctamente" : "Producto desactivado correctamente";
+        return new responseDTO("200 OK", message);
+    }
+
     // ✅ Actualizar producto
     public responseDTO update(int id, productDTO productDTO) {
+        // Depuración: imprimir el objeto recibido
+        System.out.println("Datos recibidos en la solicitud de actualización: " + productDTO);
+    
         Optional<product> existingProduct = findById(id);
         if (!existingProduct.isPresent()) {
             return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El producto no existe");
         }
-
+    
         if (!validateProduct(productDTO)) {
             return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del producto inválidos");
         }
-
+    
         // Obtener la categoría desde el repositorio
         Optional<category> categoryOptional = categoryRepository.findById(productDTO.getCategoryID());
         if (!categoryOptional.isPresent()) {
             return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Categoría no encontrada");
         }
-
+    
         product productToUpdate = existingProduct.get();
         productToUpdate.setName(productDTO.getName());
         productToUpdate.setDescription(productDTO.getDescription());
         productToUpdate.setPrice(productDTO.getPrice());
         productToUpdate.setStock(productDTO.getStock());
-        productToUpdate.setImageUrl(productDTO.getImageUrl());
+        productToUpdate.setImageUrl(productDTO.getImageUrl()); // Asegúrate de que este campo se esté mapeando correctamente
         productToUpdate.setCategory(categoryOptional.get());
-
+    
         productRepository.save(productToUpdate);
-
+    
         return new responseDTO(HttpStatus.OK.toString(), "✅ Producto actualizado correctamente");
-    }
-
-    public List<product> filterProducts(String name, String description, Double price, Boolean status, Integer categoryID) {
-        return productRepository.filterProducts(name, description, price, status, categoryID);
     }
 
     // ✅ Validaciones
