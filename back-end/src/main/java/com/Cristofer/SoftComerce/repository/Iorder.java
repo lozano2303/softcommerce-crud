@@ -21,4 +21,9 @@ public interface Iorder extends JpaRepository<order, Integer> {
     // Buscar órdenes por estado
     @Query("SELECT o FROM order o WHERE o.status = :status")
     List<order> findByStatus(@Param("status") boolean status);
+
+    @Query("SELECT o FROM order o WHERE o.userID.name = :name")
+List<order> findByUserName(@Param("name") String name); 
+
+List<order> findByUserIDIn(List<Long> userIds);
 }

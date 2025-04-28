@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Órdenes</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .crud-title {
+            border-left: 4px solid #59ab6e;
+            padding-left: 10px;
+        }
+        .action-column {
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container">
+            <a class="navbar-brand text-white" href="dashboard.html">SoftComerce Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">Ir a la tienda</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user me-1"></i> Mi cuenta
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configuración</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 bg-light sidebar py-4">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    <a href="users.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-users me-2"></i> Usuarios
+                    </a>
+                    <a href="roles.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-user-tag me-2"></i> Roles
+                    </a>
+                    <a href="product.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box me-2"></i> Productos
+                    </a>
+                    <a href="orders.html" class="list-group-item list-group-item-action active">
+                        <i class="fa fa-shopping-cart me-2"></i> Pedidos
+                    </a>
+                    <a href="product-orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box-open me-2"></i> Productos Pedidos
+                    </a>
+                    <a href="payment-order.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-file-invoice-dollar me-2"></i> Orden de Pago
+                    </a>
+                    <a href="paid.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-money-bill-wave me-2"></i> Pagados
+                    </a>
+                    <a href="categories.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tags me-2"></i> Categorías
+                    </a>
+                    <a href="reviews.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-star me-2"></i> Reseñas
+                    </a>
+                    <a href="shipping.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-truck me-2"></i> Envíos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="crud-title">Gestión de Órdenes</h2>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addOrderModal">
+                        <i class="fa fa-plus me-2"></i> Nueva Orden
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form id="filterOrdersForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <select class="form-select" id="userFilter">
+                                        <option value="">Todos los usuarios</option>
+                                        <!-- Opciones dinámicas generadas con JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">Todos los estados</option>
+                                        <option value="activo">Activo</option>
+                                        <option value="inactivo">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Orders Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Fecha de Creación</th>
+                                        <th>Estado</th>
+                                        <th>Precio Total</th>
+                                        <th class="action-column">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <!-- Filas generadas dinámicamente con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Order Modal -->
+    <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addOrderModalLabel"><i class="fa fa-plus me-2"></i> Nueva Orden</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addOrderForm">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Usuario</label>
+                            <select class="form-select" id="userName" required>
+                                <!-- Opciones dinámicas generadas por JavaScript -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Crear Orden</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Order Modal -->
+    <div class="modal fade" id="viewOrderModal" tabindex="-1" aria-labelledby="viewOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="viewOrderModalLabel"><i class="fa fa-info-circle me-2"></i> Detalles de la Orden</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>ID:</strong> <span id="orderId"></span></p>
+                    <p><strong>Usuario:</strong> <span id="orderUser"></span></p>
+                    <p><strong>Fecha de Creación:</strong> <span id="orderCreatedAt"></span></p>
+                    <p><strong>Estado:</strong> <span id="orderStatus"></span></p>
+                    <p><strong>Precio Total:</strong> <span id="orderTotalPrice"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición de Orden -->
+<div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editOrderModalLabel">Editar Orden</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editOrderForm">
+                    <input type="hidden" id="editOrderID" /> <!-- Campo oculto para el ID de la orden -->
+                    <div class="mb-3">
+                        <label for="editOrderUser" class="form-label">Usuario</label>
+                        <select id="editOrderUser" class="form-select" required>
+                            <option value="">Seleccione un usuario</option>
+                            <!-- Opciones dinámicas generadas con JavaScript -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Bootstrap and other scripts -->
+    <script src="assets/js/jquery-1.11.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/templatemo.js"></script>
+    <script src="assets/js/custom.js"></script>
+    
+    <!-- Orders Management Script -->
+    <script src="assets/js/order.js"></script>
+</body>
+</html>

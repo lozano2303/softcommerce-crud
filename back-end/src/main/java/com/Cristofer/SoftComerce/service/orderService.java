@@ -17,6 +17,7 @@ import com.Cristofer.SoftComerce.DTO.responseDTO;
 import com.Cristofer.SoftComerce.model.order;
 import com.Cristofer.SoftComerce.model.user;
 import com.Cristofer.SoftComerce.repository.Iorder;
+import com.Cristofer.SoftComerce.repository.Iorderproduct; // Cambiado a Iorderproduct
 import com.Cristofer.SoftComerce.repository.Iuser;
 
 @Service
@@ -29,19 +30,22 @@ public class orderService {
     @Autowired
     private Iuser userRepository;
 
+    @Autowired
+    private Iorderproduct orderProductRepository; // Cambiado a Iorderproduct
+
     // Listar todas las órdenes
     public List<order> findAll() {
         return orderRepository.findAll();
     }
 
+    
+    public List<order> findByUserName(String name) {
+        return orderRepository.findByUserName(name);
+    }
+
     // Buscar orden por ID
     public Optional<order> findById(int id) {
         return orderRepository.findById(id);
-    }
-
-
-    public List<order> findByUserId(int userId) {
-        return orderRepository.findByUserId(userId);
     }
 
     // Verificar si una orden existe por ID
@@ -62,11 +66,16 @@ public class orderService {
             // Crear y guardar la orden
             order orderEntity = new order();
             orderEntity.setUserID(userEntity.get());
-            orderEntity.setTotalPrice(orderDTO.getTotalPrice());
-            orderEntity.setStatus(true); // Estado inicial como true
+            orderEntity.setStatus(false); // Estado inicial como true
             orderEntity.setCreatedAt(LocalDateTime.now());
 
-            orderRepository.save(orderEntity);
+            // Guardar la orden
+            order savedOrder = orderRepository.save(orderEntity);
+
+            // Calcular el totalPrice dinámicamente
+            double totalPrice = calculateTotalPrice(savedOrder.getOrderID());
+            logger.info("Orden creada con totalPrice calculado: {}", totalPrice);
+
             return new responseDTO(HttpStatus.OK.toString(), "Orden registrada correctamente");
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al guardar la orden: {}", e.getMessage());
@@ -94,10 +103,14 @@ public class orderService {
             // Actualizar datos de la orden
             order orderToUpdate = existingOrder.get();
             orderToUpdate.setUserID(userEntity.get());
-            orderToUpdate.setTotalPrice(orderDTO.getTotalPrice());
             orderToUpdate.setCreatedAt(LocalDateTime.now());
 
             orderRepository.save(orderToUpdate);
+
+            // Calcular el totalPrice dinámicamente
+            double totalPrice = calculateTotalPrice(orderToUpdate.getOrderID());
+            logger.info("Orden actualizada con totalPrice calculado: {}", totalPrice);
+
             return new responseDTO(HttpStatus.OK.toString(), "Orden actualizada exitosamente");
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al actualizar la orden: {}", e.getMessage());
@@ -128,32 +141,12 @@ public class orderService {
         }
     }
 
-    // Filtrar órdenes por usuario
-    public List<order> filterOrdersByUser(int userID) {
-        return orderRepository.findByUserID(userID); // Suponiendo que exista este método en el repositorio
-    }
-// Convertir entidad de orden a DTO
-public orderDTO convertOrderToDTO(order orderEntity) {
-    return new orderDTO(
-        orderEntity.getUserID().getUserID(), // Obtener el ID del usuario
-        orderEntity.getTotalPrice(),
-        orderEntity.getCreatedAt()
-    );
-}
+    // Calcular el precio total de una orden
+    public double calculateTotalPrice(int orderID) {
+        // Obtener subtotales de los productos relacionados con la orden
+        List<Double> subtotals = orderProductRepository.findSubTotalsByOrderID(orderID);
 
-// Convertir DTO de orden a entidad
-public order convertOrderToModel(orderDTO orderDTO) {
-    Optional<user> userEntity = userRepository.findById(orderDTO.getUserID());
-    if (!userEntity.isPresent()) {
-        throw new IllegalArgumentException("Usuario no encontrado");
+        // Sumar los subtotales para obtener el totalPrice
+        return subtotals.stream().mapToDouble(Double::doubleValue).sum();
     }
-
-    return new order(
-        0, // orderID autogenerado
-        userEntity.get(),
-        orderDTO.getTotalPrice(),
-        true, // Estado inicial como true
-        LocalDateTime.now()
-    );
-}
 }

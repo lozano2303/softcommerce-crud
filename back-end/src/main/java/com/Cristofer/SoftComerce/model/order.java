@@ -26,7 +26,7 @@ public class order {
     @Column(name = "total_price", nullable = false)
     private double totalPrice;
 
-    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    @Column(name="status",nullable =false, columnDefinition = "boolean default false")
     private boolean status;
 
     @Column(name = "created_at", nullable = false)

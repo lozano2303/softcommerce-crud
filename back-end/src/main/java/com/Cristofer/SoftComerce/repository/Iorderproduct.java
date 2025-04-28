@@ -11,16 +11,16 @@ import com.Cristofer.SoftComerce.model.orderproductId;
 
 public interface Iorderproduct extends JpaRepository<orderproduct, orderproductId> {
 
-    // Obtener todas las relaciones activas (si hay un campo de estado relacionado)
-    @Query("SELECT op FROM orderproduct op WHERE op.order.status != false")
-    List<orderproduct> getActiveOrderProducts();
+    // Obtener los subtotales de los productos relacionados con una orden específica
+    @Query("SELECT op.subtotal FROM orderproduct op WHERE op.order.orderID = :orderID")
+    List<Double> findSubTotalsByOrderID(@Param("orderID") int orderID);
 
-    // Filtrar relaciones por ID de orden, ID de producto, cantidad o subtotal
+    // Filtrar relaciones por ID de orden, ID de producto, cantidad o subtotal (Opcional)
     @Query("""
         SELECT op
         FROM orderproduct op
-        WHERE (:orderID IS NULL OR op.order.id = :orderID)
-            AND (:productID IS NULL OR op.product.id = :productID)
+        WHERE (:orderID IS NULL OR op.order.orderID = :orderID)
+            AND (:productID IS NULL OR op.product.productID = :productID)
             AND (:quantity IS NULL OR op.quantity = :quantity)
             AND (:subtotal IS NULL OR op.subtotal = :subtotal)
     """)
