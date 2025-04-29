@@ -30,14 +30,18 @@ public class paymentorderController {
 
     // Crear una nueva relación payment-order
     @PostMapping("/")
-    public ResponseEntity<Object> createPaymentOrder(@RequestBody paymentorderDTO paymentorderDTO) {
-        responseDTO response = paymentorderService.save(paymentorderDTO);
-        if (response.getStatus().equals("success")) {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+public ResponseEntity<Object> createPaymentOrder(@RequestBody paymentorderDTO paymentorderDTO) {
+    System.out.println("Datos recibidos - paymentID: " + paymentorderDTO.getPaymentID());
+    System.out.println("Datos recibidos - orderID: " + paymentorderDTO.getOrderID());
+    
+    if (paymentorderDTO.getPaymentID() == 0 || paymentorderDTO.getOrderID() == 0) {
+        System.out.println("Datos inválidos recibidos");
     }
+    
+    responseDTO response = paymentorderService.save(paymentorderDTO);
+    return new ResponseEntity<>(response, response.getStatus().equals("success") ? 
+        HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
+}
 
     // Obtener todas las relaciones payment-order
     @GetMapping("/")

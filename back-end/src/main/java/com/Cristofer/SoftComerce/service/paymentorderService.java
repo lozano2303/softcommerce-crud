@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,97 +45,160 @@ public class paymentorderService {
         return paymentorderRepository.filterPaymentOrders(paymentID, orderID);
     }
 
-    // Guardar una relación payment-order con validaciones
     @Transactional
     public responseDTO save(paymentorderDTO paymentorderDTO) {
-        // Validar que el método de pago exista
-        Optional<payment> paymentEntity = paymentRepository.findById(paymentorderDTO.getPaymentID());
-        if (!paymentEntity.isPresent()) {
-            return new responseDTO("Método de pago no encontrado", "error");
-        }
-
-        // Validar que la orden exista
-        Optional<order> orderEntity = orderRepository.findById(paymentorderDTO.getOrderID());
-        if (!orderEntity.isPresent()) {
-            return new responseDTO("Orden no encontrada", "error");
-        }
-
         try {
-            // Convertir DTO a entidad y guardar
+            // Validación 1: Campos requeridos
+            if (paymentorderDTO.getPaymentID() <= 0 || paymentorderDTO.getOrderID() <= 0) {
+                return new responseDTO("error", "Los IDs de pago y orden deben ser mayores a cero");
+            }
+
+            // Validación 2: Verificar existencia y estado del pago
+            Optional<payment> paymentEntity = paymentRepository.findById(paymentorderDTO.getPaymentID());
+            if (!paymentEntity.isPresent()) {
+                return new responseDTO("error", "No se encontró el pago con ID: " + paymentorderDTO.getPaymentID());
+            }
+            if (!paymentEntity.get().isStatus()) {
+                return new responseDTO("error", "El pago #" + paymentorderDTO.getPaymentID() + " está inactivo");
+            }
+
+            // Validación 3: Verificar existencia de la orden
+            Optional<order> orderEntity = orderRepository.findById(paymentorderDTO.getOrderID());
+            if (!orderEntity.isPresent()) {
+                return new responseDTO("error", "No se encontró la orden con ID: " + paymentorderDTO.getOrderID());
+            }
+
+            // Validación 4: Verificar relación duplicada
             paymentorderId id = new paymentorderId();
             id.setPaymentID(paymentorderDTO.getPaymentID());
             id.setOrderID(paymentorderDTO.getOrderID());
+            
+            if (paymentorderRepository.existsById(id)) {
+                return new responseDTO("error", "Ya existe una relación entre el pago #" + 
+                    paymentorderDTO.getPaymentID() + " y la orden #" + 
+                    paymentorderDTO.getOrderID());
+            }
 
-            paymentorder paymentorder = new paymentorder();
-            paymentorder.setId(id);
-            paymentorder.setPayment(paymentEntity.get());
-            paymentorder.setOrder(orderEntity.get());
+            // Crear y guardar la nueva relación
+            paymentorder newPaymentOrder = new paymentorder();
+            newPaymentOrder.setId(id);
+            newPaymentOrder.setPayment(paymentEntity.get());
+            newPaymentOrder.setOrder(orderEntity.get());
+            paymentorderRepository.save(newPaymentOrder);
 
-            paymentorderRepository.save(paymentorder);
+            // Actualizar el estado de la orden
+            order orderToUpdate = orderEntity.get();
+            if (!orderToUpdate.isStatus()) {
+                orderToUpdate.setStatus(true);
+                orderRepository.save(orderToUpdate);
+            }
 
-            return new responseDTO("Relación método de pago-orden registrada correctamente", "success");
+            return new responseDTO(
+                "success", 
+                "Relación creada: Pago #" + paymentorderDTO.getPaymentID() + 
+                " asignado a Orden #" + paymentorderDTO.getOrderID()
+            );
+
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al guardar la relación", "error");
+            return new responseDTO(
+                "error", 
+                "Error de base de datos: " + e.getMostSpecificCause().getMessage()
+            );
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al guardar la relación", "error");
+            return new responseDTO(
+                "error", 
+                "Error inesperado: " + e.getMessage()
+            );
         }
     }
 
-    // Actualizar una relación por ID
     @Transactional
     public responseDTO update(paymentorderId id, paymentorderDTO paymentorderDTO) {
-        Optional<paymentorder> existingPaymentOrder = findById(id);
-        if (!existingPaymentOrder.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "La relación no existe");
-        }
-
-        // Validar que el método de pago exista
-        Optional<payment> paymentEntity = paymentRepository.findById(paymentorderDTO.getPaymentID());
-        if (!paymentEntity.isPresent()) {
-            return new responseDTO("Método de pago no encontrado", "error");
-        }
-
-        // Validar que la orden exista
-        Optional<order> orderEntity = orderRepository.findById(paymentorderDTO.getOrderID());
-        if (!orderEntity.isPresent()) {
-            return new responseDTO("Orden no encontrada", "error");
-        }
-
         try {
-            // Actualizar datos de la relación
+            // Validación 1: Verificar existencia de la relación
+            Optional<paymentorder> existingPaymentOrder = paymentorderRepository.findById(id);
+            if (!existingPaymentOrder.isPresent()) {
+                return new responseDTO(
+                    "error",
+                    "No se encontró la relación con Pago #" + id.getPaymentID() + 
+                    " y Orden #" + id.getOrderID()
+                );
+            }
+
+            // Validación 2: Verificar nuevo pago
+            Optional<payment> paymentEntity = paymentRepository.findById(paymentorderDTO.getPaymentID());
+            if (!paymentEntity.isPresent()) {
+                return new responseDTO(
+                    "error",
+                    "No se encontró el pago con ID: " + paymentorderDTO.getPaymentID()
+                );
+            }
+
+            // Validación 3: Verificar nueva orden
+            Optional<order> orderEntity = orderRepository.findById(paymentorderDTO.getOrderID());
+            if (!orderEntity.isPresent()) {
+                return new responseDTO(
+                    "error",
+                    "No se encontró la orden con ID: " + paymentorderDTO.getOrderID()
+                );
+            }
+
+            // Actualizar la relación
             paymentorder paymentOrderToUpdate = existingPaymentOrder.get();
             paymentOrderToUpdate.setPayment(paymentEntity.get());
             paymentOrderToUpdate.setOrder(orderEntity.get());
-
             paymentorderRepository.save(paymentOrderToUpdate);
 
-            return new responseDTO("Relación método de pago-orden actualizada exitosamente", "success");
+            return new responseDTO(
+                "success",
+                "Relación actualizada exitosamente"
+            );
+
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al actualizar la relación", "error");
+            return new responseDTO(
+                "error",
+                "Error de base de datos al actualizar: " + e.getMostSpecificCause().getMessage()
+            );
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al actualizar la relación", "error");
+            return new responseDTO(
+                "error",
+                "Error inesperado al actualizar: " + e.getMessage()
+            );
         }
     }
 
-    // Eliminar una relación por ID
     @Transactional
     public responseDTO deleteById(paymentorderId id) {
-        Optional<paymentorder> existingPaymentOrder = findById(id);
-        if (!existingPaymentOrder.isPresent()) {
-            return new responseDTO("Relación método de pago-orden no encontrada", "error");
-        }
-
         try {
+            // Verificar existencia
+            if (!paymentorderRepository.existsById(id)) {
+                return new responseDTO(
+                    "error",
+                    "No se encontró la relación con Pago #" + id.getPaymentID() + 
+                    " y Orden #" + id.getOrderID()
+                );
+            }
+
             paymentorderRepository.deleteById(id);
-            return new responseDTO("Relación método de pago-orden eliminada correctamente", "success");
+            return new responseDTO(
+                "success",
+                "Relación eliminada: Pago #" + id.getPaymentID() + 
+                " y Orden #" + id.getOrderID()
+            );
+
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al eliminar la relación", "error");
+            return new responseDTO(
+                "error",
+                "Error de base de datos al eliminar: " + e.getMostSpecificCause().getMessage()
+            );
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al eliminar la relación", "error");
+            return new responseDTO(
+                "error",
+                "Error inesperado al eliminar: " + e.getMessage()
+            );
         }
     }
-
-    // Convertir de paymentorder a paymentorderDTO
+    // Métodos de conversión
     public paymentorderDTO convertToDTO(paymentorder paymentorder) {
         return new paymentorderDTO(
             paymentorder.getPayment().getPaymentID(),
@@ -144,7 +206,6 @@ public class paymentorderService {
         );
     }
 
-    // Convertir de paymentorderDTO a paymentorder
     public paymentorder convertToModel(paymentorderDTO paymentorderDTO) {
         paymentorderId id = new paymentorderId();
         id.setPaymentID(paymentorderDTO.getPaymentID());
