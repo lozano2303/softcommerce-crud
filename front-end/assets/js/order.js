@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('searchUserName'); // Campo de búsqueda por nombre de usuario
     const statusFilter = document.getElementById('statusFilter'); // Filtro de estado
-    const tableBody = document.getElementById('ordersTableBody'); // Tabla de órdenes
-    const searchButton = document.getElementById('searchOrdersButton'); // Botón de buscar
     const apiUrlOrders = 'http://localhost:8080/api/v1/order/'; // URL de la API para órdenes
     const apiUrlUsers = 'http://localhost:8080/api/v1/user/'; // URL de la API para usuarios
 

@@ -4,18 +4,37 @@ public class orderproductDTO {
 
     private int orderID;
     private int productID;
+    private String productName; // Nuevo campo para frontend
+    private double productPrice; // Nuevo campo para frontend
     private int quantity;
     private double subtotal;
 
-    // Constructor
-    public orderproductDTO(int orderID, int productID, int quantity, double subtotal) {
+    // Constructor completo
+    public orderproductDTO(int orderID, int productID, String productName, double productPrice, int quantity, double subtotal) {
         this.orderID = orderID;
         this.productID = productID;
+        this.productName = productName;
+        this.productPrice = productPrice;
         this.quantity = quantity;
         this.subtotal = subtotal;
     }
 
-    // Getters y Setters
+    // Getters y Setters (añadir los nuevos)
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public double getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(double productPrice) {
+        this.productPrice = productPrice;
+    }
     public int getOrderID() {
         return orderID;
     }

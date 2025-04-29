@@ -141,12 +141,21 @@ public class orderService {
         }
     }
 
-    // Calcular el precio total de una orden
-    public double calculateTotalPrice(int orderID) {
-        // Obtener subtotales de los productos relacionados con la orden
-        List<Double> subtotals = orderProductRepository.findSubTotalsByOrderID(orderID);
+    // Método para actualizar solo el totalPrice de una orden
+    @Transactional
+    public void updateOrderTotalPrice(int orderId, double totalPrice) {
+        Optional<order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isPresent()) {
+            order orderToUpdate = orderOpt.get();
+            orderToUpdate.setTotalPrice(totalPrice);
+            orderRepository.save(orderToUpdate);
+            logger.info("TotalPrice actualizado para orden {}: {}", orderId, totalPrice);
+        }
+    }
 
-        // Sumar los subtotales para obtener el totalPrice
+    // Calcular el precio total de una orden (ya existente)
+    public double calculateTotalPrice(int orderID) {
+        List<Double> subtotals = orderProductRepository.findSubTotalsByOrderID(orderID);
         return subtotals.stream().mapToDouble(Double::doubleValue).sum();
     }
 }
