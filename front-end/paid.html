@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Pagos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .crud-title {
+            border-left: 4px solid #59ab6e;
+            padding-left: 10px;
+        }
+        .action-column {
+            width: 120px;
+        }
+        #loadingIndicator {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container">
+            <a class="navbar-brand text-white" href="dashboard.html">SoftComerce Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">Ir a la tienda</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user me-1"></i> Mi cuenta
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configuración</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 bg-light sidebar py-4">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    <a href="users.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-users me-2"></i> Usuarios
+                    </a>
+                    <a href="roles.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-user-tag me-2"></i> Roles
+                    </a>
+                    <a href="product.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box me-2"></i> Productos
+                    </a>
+                    <a href="orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-shopping-cart me-2"></i> Pedidos
+                    </a>
+                    <a href="product-orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box-open me-2"></i> Productos Pedidos
+                    </a>
+                    <a href="payment-order.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-file-invoice-dollar me-2"></i> Orden de Pago
+                    </a>
+                    <a href="paid.html" class="list-group-item list-group-item-action active">
+                        <i class="fa fa-money-bill-wave me-2"></i> Pagados
+                    </a>
+                    <a href="categories.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tags me-2"></i> Categorías
+                    </a>
+                    <a href="reviews.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-star me-2"></i> Reseñas
+                    </a>
+                    <a href="shipping.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-truck me-2"></i> Envíos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="crud-title">Gestión de Pagos</h2>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
+                        <i class="fa fa-plus me-2"></i> Registrar Pago
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="methodFilter" class="form-label">Método de Pago</label>
+                                <input type="text" class="form-control" id="methodFilter" placeholder="Filtrar por método">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="statusFilter" class="form-label">Estado</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">Todos</option>
+                                    <option value="true">Activo</option>
+                                    <option value="false">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payments Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Monto</th>
+                                        <th>Método</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                        <th class="action-column">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTableBody">
+                                    <!-- Filas generadas dinámicamente con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Payment Modal -->
+    <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addPaymentModalLabel"><i class="fa fa-plus me-2"></i> Registrar Nuevo Pago</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPaymentForm">
+                        <div class="mb-3">
+                            <label for="userID" class="form-label">Usuario</label>
+                            <select class="form-select" id="userID" required>
+                                <option value="">Seleccione un usuario</option>
+                                <!-- Opciones dinámicas generadas por JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Monto</label>
+                            <input type="number" step="0.01" class="form-control" id="amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="method" class="form-label">Método de Pago</label>
+                            <select class="form-select" id="method" required>
+                                <option value="">Seleccione método</option>
+                                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                                <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="PayPal">PayPal</option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-2"></i>Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Payment Modal -->
+    <div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editPaymentModalLabel"><i class="fa fa-edit me-2"></i> Editar Pago</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPaymentForm">
+                        <input type="hidden" id="editPaymentId">
+                        <div class="mb-3">
+                            <label for="editUserID" class="form-label">Usuario</label>
+                            <select class="form-select" id="editUserID" required>
+                                <option value="">Seleccione un usuario</option>
+                                <!-- Opciones dinámicas generadas por JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAmount" class="form-label">Monto</label>
+                            <input type="number" step="0.01" class="form-control" id="editAmount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMethod" class="form-label">Método de Pago</label>
+                            <select class="form-select" id="editMethod" required>
+                                <option value="">Seleccione método</option>
+                                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                                <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="PayPal">PayPal</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editStatus">
+                            <label class="form-check-label" for="editStatus">Activo</label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+
+    <!-- Bootstrap and other scripts -->
+    <script src="assets/js/jquery-1.11.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/templatemo.js"></script>
+    <script src="assets/js/custom.js"></script>
+    
+    <!-- Payment Management Script -->
+    <script src="assets/js/payment.js"></script>
+</body>
+</html>

@@ -114,23 +114,58 @@ public class paymentService {
 
     // Eliminar pago por ID
     @Transactional
-    public responseDTO deleteById(int id) {
-        Optional<payment> paymentEntity = findById(id);
-        if (!paymentEntity.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Pago no encontrado");
-        }
-
-        try {
-            paymentRepository.deleteById(id);
-            return new responseDTO(HttpStatus.OK.toString(), "Pago eliminado correctamente");
-        } catch (DataAccessException e) {
-            logger.error("Error de base de datos al eliminar el pago: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
-        } catch (Exception e) {
-            logger.error("Error inesperado al eliminar el pago: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
-        }
+public responseDTO disablePayment(int id) {
+    // Buscar el pago por ID
+    Optional<payment> paymentEntity = findById(id);
+    if (!paymentEntity.isPresent()) {
+        return new responseDTO("error", "Pago no encontrado");
     }
+
+    try {
+        payment paymentToDisable = paymentEntity.get();
+
+        // Cambiar el estatus del pago a false (deshabilitar)
+        paymentToDisable.setStatus(false);
+
+        // Guardar el cambio en la base de datos
+        paymentRepository.save(paymentToDisable);
+
+        return new responseDTO("success", "Pago deshabilitado correctamente");
+    } catch (DataAccessException e) {
+        logger.error("Error de base de datos al deshabilitar el pago: {}", e.getMessage());
+        return new responseDTO("error", "Error de base de datos al deshabilitar el pago");
+    } catch (Exception e) {
+        logger.error("Error inesperado al deshabilitar el pago: {}", e.getMessage());
+        return new responseDTO("error", "Error inesperado al deshabilitar el pago");
+    }
+}
+
+@Transactional
+public responseDTO reactivatePayment(int id) {
+    // Buscar el pago por ID
+    Optional<payment> paymentEntity = findById(id);
+    if (!paymentEntity.isPresent()) {
+        return new responseDTO("error", "Pago no encontrado");
+    }
+
+    try {
+        payment paymentToReactivate = paymentEntity.get();
+
+        // Cambiar el estatus del pago a true (reactivar)
+        paymentToReactivate.setStatus(true);
+
+        // Guardar el cambio en la base de datos
+        paymentRepository.save(paymentToReactivate);
+
+        return new responseDTO("success", "Pago reactivado correctamente");
+    } catch (DataAccessException e) {
+        logger.error("Error de base de datos al reactivar el pago: {}", e.getMessage());
+        return new responseDTO("error", "Error de base de datos al reactivar el pago");
+    } catch (Exception e) {
+        logger.error("Error inesperado al reactivar el pago: {}", e.getMessage());
+        return new responseDTO("error", "Error inesperado al reactivar el pago");
+    }
+}
 
 // Convertir entidad a DTO
 public paymentDTO convertToDTO(payment paymentEntity) {

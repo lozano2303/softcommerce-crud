@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,15 +53,25 @@ public class paymentController {
     }
 
     // Eliminar un pago por su ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletePayment(@PathVariable int id) {
-        responseDTO response = paymentService.deleteById(id);
-        if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+    @PutMapping("/disable/{id}")
+public ResponseEntity<responseDTO> disablePayment(@PathVariable int id) {
+    responseDTO response = paymentService.disablePayment(id);
+    if (response.getStatus().equals("success")) {
+        return ResponseEntity.ok(response);
+    } else {
+        return ResponseEntity.badRequest().body(response);
     }
+}
+
+@PutMapping("/reactivate/{id}")
+public ResponseEntity<responseDTO> reactivatePayment(@PathVariable int id) {
+    responseDTO response = paymentService.reactivatePayment(id);
+    if (response.getStatus().equals("success")) {
+        return ResponseEntity.ok(response);
+    } else {
+        return ResponseEntity.badRequest().body(response);
+    }
+}
 
     // Actualizar un pago por su ID
     @PutMapping("/{id}")
