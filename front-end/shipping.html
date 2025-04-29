@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Envíos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .crud-title {
+            border-left: 4px solid #59ab6e;
+            padding-left: 10px;
+        }
+        .action-column {
+            width: 200px;
+        }
+        #loadingIndicator {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container">
+            <a class="navbar-brand text-white" href="dashboard.html">SoftComerce Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">Ir a la tienda</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user me-1"></i> Mi cuenta
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configuración</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 bg-light sidebar py-4">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    <a href="users.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-users me-2"></i> Usuarios
+                    </a>
+                    <a href="roles.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-user-tag me-2"></i> Roles
+                    </a>
+                    <a href="product.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box me-2"></i> Productos
+                    </a>
+                    <a href="orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-shopping-cart me-2"></i> Pedidos
+                    </a>
+                    <a href="product-orders.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-box-open me-2"></i> Productos Pedidos
+                    </a>
+                    <a href="payment-order.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-file-invoice-dollar me-2"></i> Pagos-Órdenes
+                    </a>
+                    <a href="paid.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-money-bill-wave me-2"></i> Pagados
+                    </a>
+                    <a href="categories.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-tags me-2"></i> Categorías
+                    </a>
+                    <a href="reviews.html" class="list-group-item list-group-item-action">
+                        <i class="fa fa-star me-2"></i> Reseñas
+                    </a>
+                    <a href="shipping.html" class="list-group-item list-group-item-action active">
+                        <i class="fa fa-truck me-2"></i> Envíos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="crud-title">Gestión de Envíos</h2>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addShippingModal">
+                        <i class="fa fa-plus me-2"></i> Nuevo Envío
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form id="filterForm">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="orderFilter" class="form-label">ID Orden</label>
+                                    <input type="number" class="form-control" id="orderFilter" placeholder="Filtrar por orden">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="addressFilter" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="addressFilter" placeholder="Buscar en dirección">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="cityFilter" class="form-label">Ciudad</label>
+                                    <input type="text" class="form-control" id="cityFilter" placeholder="Filtrar por ciudad">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="countryFilter" class="form-label">País</label>
+                                    <input type="text" class="form-control" id="countryFilter" placeholder="Filtrar por país">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="postalCodeFilter" class="form-label">Código Postal</label>
+                                    <input type="text" class="form-control" id="postalCodeFilter" placeholder="Filtrar por CP">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Tabla de envíos -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Orden</th>
+                                        <th>Dirección</th>
+                                        <th>Ciudad</th>
+                                        <th>País</th>
+                                        <th>Código Postal</th>
+                                        <th>Estado</th>
+                                        <th>Fecha Creación</th>
+                                        <th class="action-column">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shippingTableBody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar envío -->
+    <div class="modal fade" id="addShippingModal" tabindex="-1" aria-labelledby="addShippingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addShippingModalLabel">
+                        <i class="fa fa-plus me-2"></i> Nuevo Envío
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addShippingForm">
+                        <div class="mb-3">
+                            <label for="selectOrder" class="form-label">Orden</label>
+                            <select class="form-select" id="selectOrder" required>
+                                <option value="">Seleccione una orden</option>
+                                <!-- Opciones dinámicas -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="address" required maxlength="255">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">Ciudad</label>
+                                <input type="text" class="form-control" id="city" required maxlength="100">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="country" class="form-label">País</label>
+                                <input type="text" class="form-control" id="country" required maxlength="100">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postalCode" class="form-label">Código Postal</label>
+                            <input type="text" class="form-control" id="postalCode" required maxlength="20">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-2"></i>Guardar Envío
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar envío -->
+    <div class="modal fade" id="editShippingModal" tabindex="-1" aria-labelledby="editShippingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editShippingModalLabel">
+                        <i class="fa fa-edit me-2"></i> Editar Envío
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editShippingForm">
+                        <input type="hidden" id="editShippingId">
+                        <div class="mb-3">
+                            <label for="editSelectOrder" class="form-label">Orden</label>
+                            <select class="form-select" id="editSelectOrder" required>
+                                <!-- Opciones dinámicas -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAddress" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="editAddress" required maxlength="255">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editCity" class="form-label">Ciudad</label>
+                                <input type="text" class="form-control" id="editCity" required maxlength="100">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editCountry" class="form-label">País</label>
+                                <input type="text" class="form-control" id="editCountry" required maxlength="100">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPostalCode" class="form-label">Código Postal</label>
+                            <input type="text" class="form-control" id="editPostalCode" required maxlength="20">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+
+    <!-- Bootstrap and other scripts -->
+    <script src="assets/js/jquery-1.11.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/templatemo.js"></script>
+    <script src="assets/js/custom.js"></script>
+    
+    <!-- Shipping Management Script -->
+    <script src="assets/js/shipping.js"></script>
+</body>
+</html>

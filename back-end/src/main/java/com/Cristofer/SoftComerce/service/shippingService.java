@@ -15,7 +15,7 @@ import com.Cristofer.SoftComerce.DTO.shippingDTO;
 import com.Cristofer.SoftComerce.model.order;
 import com.Cristofer.SoftComerce.model.shipping;
 import com.Cristofer.SoftComerce.repository.Iorder;
-import com.Cristofer.SoftComerce.repository.Ishipping;
+import com.Cristofer.SoftComerce.repository.Ishipping;;
 
 @Service
 public class shippingService {
@@ -126,21 +126,43 @@ public class shippingService {
 
     // Eliminar envío por ID
     @Transactional
-    public responseDTO deleteById(int id) {
-        Optional<shipping> shippingEntity = findById(id);
-        if (!shippingEntity.isPresent()) {
-            return new responseDTO("error", "Envío no encontrado");
-        }
-
-        try {
-            shippingRepo.deleteById(id);
-            return new responseDTO("success", "Envío eliminado correctamente");
-        } catch (DataAccessException e) {
-            return new responseDTO("error", "Error de base de datos al eliminar el envío");
-        } catch (Exception e) {
-            return new responseDTO("error", "Error inesperado al eliminar el envío");
-        }
+public responseDTO deactivateShipping(int id) {
+    Optional<shipping> shippingEntity = shippingRepository.findById(id);
+    if (!shippingEntity.isPresent()) {
+        return new responseDTO("error", "Envío no encontrado");
     }
+
+    try {
+        shipping shippingToDeactivate = shippingEntity.get();
+        shippingToDeactivate.setStatus(false);
+        shippingRepository.save(shippingToDeactivate);
+        return new responseDTO("success", "Envío desactivado correctamente");
+    } catch (DataAccessException e) {
+        return new responseDTO("error", "Error de base de datos al desactivar el envío");
+    } catch (Exception e) {
+        return new responseDTO("error", "Error inesperado al desactivar el envío");
+    }
+}
+
+@Transactional
+public responseDTO reactivateShipping(int id) {
+    Optional<shipping> shippingEntity = shippingRepository.findById(id);
+    if (!shippingEntity.isPresent()) {
+        return new responseDTO("error", "Envío no encontrado");
+    }
+
+    try {
+        shipping shippingToReactivate = shippingEntity.get();
+        shippingToReactivate.setStatus(true);
+        shippingRepository.save(shippingToReactivate);
+        return new responseDTO("success", "Envío reactivado correctamente");
+    } catch (DataAccessException e) {
+        return new responseDTO("error", "Error de base de datos al reactivar el envío");
+    } catch (Exception e) {
+        return new responseDTO("error", "Error inesperado al reactivar el envío");
+    }
+}
+
 
     // Convertir entidad a DTO
     public shippingDTO convertToDTO(shipping shippingEntity) {

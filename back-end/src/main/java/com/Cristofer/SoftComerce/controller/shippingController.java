@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,16 +52,18 @@ public class shippingController {
         return new ResponseEntity<>(shipping.get(), HttpStatus.OK);
     }
 
-    // Eliminar un envío por su ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteShipping(@PathVariable int id) {
-        responseDTO response = shippingService.deleteById(id);
-        if (response.getStatus().equals("success")) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
+    @PutMapping("/deactivate/{id}")
+public ResponseEntity<responseDTO> deactivateShipping(@PathVariable int id) {
+    responseDTO response = shippingService.deactivateShipping(id);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+}
+
+@PutMapping("/reactivate/{id}")
+public ResponseEntity<responseDTO> reactivateShipping(@PathVariable int id) {
+    responseDTO response = shippingService.reactivateShipping(id);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+}
+
 
     // Actualizar un envío por su ID
     @PutMapping("/{id}")
