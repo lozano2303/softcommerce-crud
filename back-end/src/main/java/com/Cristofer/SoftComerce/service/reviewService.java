@@ -54,22 +54,22 @@ public class reviewService {
         // Validar que el usuario exista
         Optional<user> userEntity = userRepository.findById(reviewDTO.getUserID());
         if (!userEntity.isPresent()) {
-            return new responseDTO("Usuario no encontrado", "error");
+            return new responseDTO( "error","Usuario no encontrado");
         }
 
         // Validar que el producto exista
         Optional<product> productEntity = productRepository.findById(reviewDTO.getProductID());
         if (!productEntity.isPresent()) {
-            return new responseDTO("Producto no encontrado", "error");
+            return new responseDTO( "error","Producto no encontrado");
         }
 
         // Validaciones adicionales
         if (reviewDTO.getRating() < 1 || reviewDTO.getRating() > 5) {
-            return new responseDTO("La calificación debe estar entre 1 y 5", "error");
+            return new responseDTO( "error","La calificación debe estar entre 1 y 5");
         }
 
         if (reviewDTO.getComment().length() < 1 || reviewDTO.getComment().length() > 255) {
-            return new responseDTO("El comentario debe estar entre 1 y 255 caracteres", "error");
+            return new responseDTO( "error", "El comentario debe estar entre 1 y 255 caracteres");
         }
 
         try {
@@ -79,11 +79,11 @@ public class reviewService {
             reviewEntity.setProduct(productEntity.get());
             reviewRepository.save(reviewEntity);
 
-            return new responseDTO("Reseña registrada correctamente", "success");
+            return new responseDTO( "success","Reseña registrada correctamente");
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al guardar la reseña", "error");
+            return new responseDTO( "error","Error de base de datos al guardar la reseña");
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al guardar la reseña", "error");
+            return new responseDTO( "error","Error inesperado al guardar la reseña");
         }
     }
 
@@ -98,22 +98,22 @@ public class reviewService {
         // Validar que el usuario exista
         Optional<user> userEntity = userRepository.findById(reviewDTO.getUserID());
         if (!userEntity.isPresent()) {
-            return new responseDTO("Usuario no encontrado", "error");
+            return new responseDTO( "error","Usuario no encontrado");
         }
 
         // Validar que el producto exista
         Optional<product> productEntity = productRepository.findById(reviewDTO.getProductID());
         if (!productEntity.isPresent()) {
-            return new responseDTO("Producto no encontrado", "error");
+            return new responseDTO( "error","Producto no encontrado");
         }
 
         // Validaciones adicionales
         if (reviewDTO.getRating() < 1 || reviewDTO.getRating() > 5) {
-            return new responseDTO("La calificación debe estar entre 1 y 5", "error");
+            return new responseDTO( "error","La calificación debe estar entre 1 y 5");
         }
 
         if (reviewDTO.getComment().length() < 1 || reviewDTO.getComment().length() > 255) {
-            return new responseDTO("El comentario debe estar entre 1 y 255 caracteres", "error");
+            return new responseDTO("error","El comentario debe estar entre 1 y 255 caracteres");
         }
 
         try {
@@ -127,11 +127,11 @@ public class reviewService {
 
             reviewRepository.save(reviewToUpdate);
 
-            return new responseDTO("Reseña actualizada exitosamente", "success");
+            return new responseDTO( "success","Reseña actualizada exitosamente");
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al actualizar la reseña", "error");
+            return new responseDTO( "error","Error de base de datos al actualizar la reseña");
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al actualizar la reseña", "error");
+            return new responseDTO( "error","Error inesperado al actualizar la reseña");
         }
     }
 
@@ -140,16 +140,16 @@ public class reviewService {
     public responseDTO deleteById(int id) {
         Optional<review> reviewEntity = reviewRepository.findById(id);
         if (!reviewEntity.isPresent()) {
-            return new responseDTO("Reseña no encontrada", "error");
+            return new responseDTO( "error","Reseña no encontrada");
         }
 
         try {
             reviewRepository.deleteById(id);
-            return new responseDTO("Reseña eliminada correctamente", "success");
+            return new responseDTO( "success", "Reseña eliminada correctamente");
         } catch (DataAccessException e) {
-            return new responseDTO("Error de base de datos al eliminar la reseña", "error");
+            return new responseDTO("error","Error de base de datos al eliminar la reseña");
         } catch (Exception e) {
-            return new responseDTO("Error inesperado al eliminar la reseña", "error");
+            return new responseDTO( "error","Error inesperado al eliminar la reseña");
         }
     }
 
