@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Table(name = "roletable")
 @Entity
-public class role {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roleID")
@@ -19,11 +19,11 @@ public class role {
     private String name;
 
     // Constructor sin parámetros (predeterminado)
-    public role() {
+    public Role() {
     }
 
     // Constructor con parámetros
-    public role(int roleID, String name) {
+    public Role(int roleID, String name) {
         this.roleID = roleID;
         this.name = name;
     }

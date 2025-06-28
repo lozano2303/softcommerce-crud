@@ -6,18 +6,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.Cristofer.SoftComerce.model.category;
+import com.Cristofer.SoftComerce.model.Category;
 
-public interface Icategory extends JpaRepository<category, Integer> {
+public interface ICategory extends JpaRepository<Category, Integer> {
 
     // 🔍 Búsqueda por nombre de categoría (similar a validateProduct)
-    @Query("SELECT c FROM category c WHERE c.categoryName LIKE %:categoryName%")
-    List<category> findByCategoryName(@Param("categoryName") String categoryName);
+    @Query("SELECT c FROM Category c WHERE c.categoryName LIKE %:categoryName%")
+    List<Category> findByCategoryName(@Param("categoryName") String categoryName);
 
     // 🔍 Filtro avanzado
-    @Query("SELECT c FROM category c WHERE " +
+    @Query("SELECT c FROM Category c WHERE " +
             "(:categoryName IS NULL OR c.categoryName LIKE %:categoryName%)")
-    List<category> filterCategories(
+    List<Category> filterCategories(
         @Param("categoryName") String categoryName
     );
 }

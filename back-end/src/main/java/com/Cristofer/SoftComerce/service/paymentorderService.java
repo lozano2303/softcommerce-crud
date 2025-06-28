@@ -8,159 +8,159 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.Cristofer.SoftComerce.DTO.paymentorderDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.order;
-import com.Cristofer.SoftComerce.model.payment;
-import com.Cristofer.SoftComerce.model.paymentorder;
-import com.Cristofer.SoftComerce.model.paymentorderId;
-import com.Cristofer.SoftComerce.repository.Iorder;
-import com.Cristofer.SoftComerce.repository.Ipayment;
-import com.Cristofer.SoftComerce.repository.Ipaymentorder;
+import com.Cristofer.SoftComerce.DTO.PaymentOrderDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.Order;
+import com.Cristofer.SoftComerce.model.Payment;
+import com.Cristofer.SoftComerce.model.PaymentOrder;
+import com.Cristofer.SoftComerce.model.PaymentOrderId;
+import com.Cristofer.SoftComerce.repository.IOrder;
+import com.Cristofer.SoftComerce.repository.IPayment;
+import com.Cristofer.SoftComerce.repository.IPaymentOrder;
 
 @Service
-public class paymentorderService {
+public class PaymentOrderService {
 
     @Autowired
-    private Ipaymentorder paymentorderRepository;
+    private IPaymentOrder paymentOrderRepository;
 
     @Autowired
-    private Ipayment paymentRepository;
+    private IPayment paymentRepository;
 
     @Autowired
-    private Iorder orderRepository;
+    private IOrder orderRepository;
 
     // Listar todas las relaciones payment-order
-    public List<paymentorder> findAll() {
-        return paymentorderRepository.findAll();
+    public List<PaymentOrder> findAll() {
+        return paymentOrderRepository.findAll();
     }
 
     // Buscar una relación por ID
-    public Optional<paymentorder> findById(paymentorderId id) {
-        return paymentorderRepository.findById(id);
+    public Optional<PaymentOrder> findById(PaymentOrderId id) {
+        return paymentOrderRepository.findById(id);
     }
 
     // Método para filtrar relaciones payment-order
-    public List<paymentorder> filterPaymentOrders(Integer paymentID, Integer orderID) {
-        return paymentorderRepository.filterPaymentOrders(paymentID, orderID);
+    public List<PaymentOrder> filterPaymentOrders(Integer paymentID, Integer orderID) {
+        return paymentOrderRepository.filterPaymentOrders(paymentID, orderID);
     }
 
     @Transactional
-    public responseDTO save(paymentorderDTO paymentorderDTO) {
+    public ResponseDTO save(PaymentOrderDTO paymentOrderDTO) {
         try {
             // Validación 1: Campos requeridos
-            if (paymentorderDTO.getPaymentID() <= 0 || paymentorderDTO.getOrderID() <= 0) {
-                return new responseDTO("error", "Los IDs de pago y orden deben ser mayores a cero");
+            if (paymentOrderDTO.getPaymentID() <= 0 || paymentOrderDTO.getOrderID() <= 0) {
+                return new ResponseDTO("error", "Los IDs de pago y orden deben ser mayores a cero");
             }
 
             // Validación 2: Verificar existencia y estado del pago
-            Optional<payment> paymentEntity = paymentRepository.findById(paymentorderDTO.getPaymentID());
+            Optional<Payment> paymentEntity = paymentRepository.findById(paymentOrderDTO.getPaymentID());
             if (!paymentEntity.isPresent()) {
-                return new responseDTO("error", "No se encontró el pago con ID: " + paymentorderDTO.getPaymentID());
+                return new ResponseDTO("error", "No se encontró el pago con ID: " + paymentOrderDTO.getPaymentID());
             }
             if (!paymentEntity.get().isStatus()) {
-                return new responseDTO("error", "El pago #" + paymentorderDTO.getPaymentID() + " está inactivo");
+                return new ResponseDTO("error", "El pago #" + paymentOrderDTO.getPaymentID() + " está inactivo");
             }
 
             // Validación 3: Verificar existencia de la orden
-            Optional<order> orderEntity = orderRepository.findById(paymentorderDTO.getOrderID());
+            Optional<Order> orderEntity = orderRepository.findById(paymentOrderDTO.getOrderID());
             if (!orderEntity.isPresent()) {
-                return new responseDTO("error", "No se encontró la orden con ID: " + paymentorderDTO.getOrderID());
+                return new ResponseDTO("error", "No se encontró la orden con ID: " + paymentOrderDTO.getOrderID());
             }
 
             // Validación 4: Verificar relación duplicada
-            paymentorderId id = new paymentorderId();
-            id.setPaymentID(paymentorderDTO.getPaymentID());
-            id.setOrderID(paymentorderDTO.getOrderID());
-            
-            if (paymentorderRepository.existsById(id)) {
-                return new responseDTO("error", "Ya existe una relación entre el pago #" + 
-                    paymentorderDTO.getPaymentID() + " y la orden #" + 
-                    paymentorderDTO.getOrderID());
+            PaymentOrderId id = new PaymentOrderId();
+            id.setPaymentID(paymentOrderDTO.getPaymentID());
+            id.setOrderID(paymentOrderDTO.getOrderID());
+
+            if (paymentOrderRepository.existsById(id)) {
+                return new ResponseDTO("error", "Ya existe una relación entre el pago #" +
+                    paymentOrderDTO.getPaymentID() + " y la orden #" +
+                    paymentOrderDTO.getOrderID());
             }
 
             // Crear y guardar la nueva relación
-            paymentorder newPaymentOrder = new paymentorder();
+            PaymentOrder newPaymentOrder = new PaymentOrder();
             newPaymentOrder.setId(id);
             newPaymentOrder.setPayment(paymentEntity.get());
             newPaymentOrder.setOrder(orderEntity.get());
-            paymentorderRepository.save(newPaymentOrder);
+            paymentOrderRepository.save(newPaymentOrder);
 
             // Actualizar el estado de la orden
-            order orderToUpdate = orderEntity.get();
+            Order orderToUpdate = orderEntity.get();
             if (!orderToUpdate.isStatus()) {
                 orderToUpdate.setStatus(true);
                 orderRepository.save(orderToUpdate);
             }
 
-            return new responseDTO(
-                "success", 
-                "Relación creada: Pago #" + paymentorderDTO.getPaymentID() + 
-                " asignado a Orden #" + paymentorderDTO.getOrderID()
+            return new ResponseDTO(
+                "success",
+                "Relación creada: Pago #" + paymentOrderDTO.getPaymentID() +
+                " asignado a Orden #" + paymentOrderDTO.getOrderID()
             );
 
         } catch (DataAccessException e) {
-            return new responseDTO(
-                "error", 
+            return new ResponseDTO(
+                "error",
                 "Error de base de datos: " + e.getMostSpecificCause().getMessage()
             );
         } catch (Exception e) {
-            return new responseDTO(
-                "error", 
+            return new ResponseDTO(
+                "error",
                 "Error inesperado: " + e.getMessage()
             );
         }
     }
 
     @Transactional
-    public responseDTO update(paymentorderId id, paymentorderDTO paymentorderDTO) {
+    public ResponseDTO update(PaymentOrderId id, PaymentOrderDTO paymentOrderDTO) {
         try {
             // Validación 1: Verificar existencia de la relación
-            Optional<paymentorder> existingPaymentOrder = paymentorderRepository.findById(id);
+            Optional<PaymentOrder> existingPaymentOrder = paymentOrderRepository.findById(id);
             if (!existingPaymentOrder.isPresent()) {
-                return new responseDTO(
+                return new ResponseDTO(
                     "error",
-                    "No se encontró la relación con Pago #" + id.getPaymentID() + 
+                    "No se encontró la relación con Pago #" + id.getPaymentID() +
                     " y Orden #" + id.getOrderID()
                 );
             }
 
             // Validación 2: Verificar nuevo pago
-            Optional<payment> paymentEntity = paymentRepository.findById(paymentorderDTO.getPaymentID());
+            Optional<Payment> paymentEntity = paymentRepository.findById(paymentOrderDTO.getPaymentID());
             if (!paymentEntity.isPresent()) {
-                return new responseDTO(
+                return new ResponseDTO(
                     "error",
-                    "No se encontró el pago con ID: " + paymentorderDTO.getPaymentID()
+                    "No se encontró el pago con ID: " + paymentOrderDTO.getPaymentID()
                 );
             }
 
             // Validación 3: Verificar nueva orden
-            Optional<order> orderEntity = orderRepository.findById(paymentorderDTO.getOrderID());
+            Optional<Order> orderEntity = orderRepository.findById(paymentOrderDTO.getOrderID());
             if (!orderEntity.isPresent()) {
-                return new responseDTO(
+                return new ResponseDTO(
                     "error",
-                    "No se encontró la orden con ID: " + paymentorderDTO.getOrderID()
+                    "No se encontró la orden con ID: " + paymentOrderDTO.getOrderID()
                 );
             }
 
             // Actualizar la relación
-            paymentorder paymentOrderToUpdate = existingPaymentOrder.get();
+            PaymentOrder paymentOrderToUpdate = existingPaymentOrder.get();
             paymentOrderToUpdate.setPayment(paymentEntity.get());
             paymentOrderToUpdate.setOrder(orderEntity.get());
-            paymentorderRepository.save(paymentOrderToUpdate);
+            paymentOrderRepository.save(paymentOrderToUpdate);
 
-            return new responseDTO(
+            return new ResponseDTO(
                 "success",
                 "Relación actualizada exitosamente"
             );
 
         } catch (DataAccessException e) {
-            return new responseDTO(
+            return new ResponseDTO(
                 "error",
                 "Error de base de datos al actualizar: " + e.getMostSpecificCause().getMessage()
             );
         } catch (Exception e) {
-            return new responseDTO(
+            return new ResponseDTO(
                 "error",
                 "Error inesperado al actualizar: " + e.getMessage()
             );
@@ -168,52 +168,53 @@ public class paymentorderService {
     }
 
     @Transactional
-    public responseDTO deleteById(paymentorderId id) {
+    public ResponseDTO deleteById(PaymentOrderId id) {
         try {
             // Verificar existencia
-            if (!paymentorderRepository.existsById(id)) {
-                return new responseDTO(
+            if (!paymentOrderRepository.existsById(id)) {
+                return new ResponseDTO(
                     "error",
-                    "No se encontró la relación con Pago #" + id.getPaymentID() + 
+                    "No se encontró la relación con Pago #" + id.getPaymentID() +
                     " y Orden #" + id.getOrderID()
                 );
             }
 
-            paymentorderRepository.deleteById(id);
-            return new responseDTO(
+            paymentOrderRepository.deleteById(id);
+            return new ResponseDTO(
                 "success",
-                "Relación eliminada: Pago #" + id.getPaymentID() + 
+                "Relación eliminada: Pago #" + id.getPaymentID() +
                 " y Orden #" + id.getOrderID()
             );
 
         } catch (DataAccessException e) {
-            return new responseDTO(
+            return new ResponseDTO(
                 "error",
                 "Error de base de datos al eliminar: " + e.getMostSpecificCause().getMessage()
             );
         } catch (Exception e) {
-            return new responseDTO(
+            return new ResponseDTO(
                 "error",
                 "Error inesperado al eliminar: " + e.getMessage()
             );
         }
     }
+
     // Métodos de conversión
-    public paymentorderDTO convertToDTO(paymentorder paymentorder) {
-        return new paymentorderDTO(
-            paymentorder.getPayment().getPaymentID(),
-            paymentorder.getOrder().getOrderID()
+    public PaymentOrderDTO convertToDTO(PaymentOrder paymentOrder) {
+        return new PaymentOrderDTO(
+            paymentOrder.getPayment().getPaymentID(),
+            paymentOrder.getOrder().getOrderID()
         );
     }
 
-    public paymentorder convertToModel(paymentorderDTO paymentorderDTO) {
-        paymentorderId id = new paymentorderId();
-        id.setPaymentID(paymentorderDTO.getPaymentID());
-        id.setOrderID(paymentorderDTO.getOrderID());
+    public PaymentOrder convertToModel(PaymentOrderDTO paymentOrderDTO) {
+        PaymentOrderId id = new PaymentOrderId();
+        id.setPaymentID(paymentOrderDTO.getPaymentID());
+        id.setOrderID(paymentOrderDTO.getOrderID());
 
-        paymentorder paymentorder = new paymentorder();
-        paymentorder.setId(id);
+        PaymentOrder paymentOrder = new PaymentOrder();
+        paymentOrder.setId(id);
 
-        return paymentorder;
+        return paymentOrder;
     }
 }

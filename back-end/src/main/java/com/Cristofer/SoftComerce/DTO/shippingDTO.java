@@ -2,22 +2,22 @@ package com.Cristofer.SoftComerce.DTO;
 
 import java.time.LocalDateTime;
 
-public class shippingDTO {
+public class ShippingDTO {
     
     private int orderID;
     private String address;
     private String city;
     private String country;
-    private String postal_code;
-    private LocalDateTime created_at;
+    private String postalCode;
+    private LocalDateTime createdAt;
 
-    public shippingDTO(int orderID, String address, String city, String country, String postal_code, LocalDateTime created_at) {
+    public ShippingDTO(int orderID, String address, String city, String country, String postalCode, LocalDateTime createdAt) {
         this.orderID = orderID;
         this.address = address;
         this.city = city;
         this.country = country;
-        this.postal_code = postal_code;
-        this.created_at = created_at;
+        this.postalCode = postalCode;
+        this.createdAt = createdAt;
     }
 
     public int getOrderID() {
@@ -52,19 +52,19 @@ public class shippingDTO {
         this.country = country;
     }
 
-    public String getPostal_code() {
-        return postal_code;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostal_code(String postal_code) {
-        this.postal_code = postal_code;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
-    public LocalDateTime getCreated_at() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

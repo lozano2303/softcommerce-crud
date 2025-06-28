@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "user")
-public class user {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
@@ -34,14 +34,14 @@ public class user {
 
     @ManyToOne
     @JoinColumn(name = "roleID", nullable = false)
-    private role roleID;
+    private Role roleID;
 
     // Constructor sin parámetros
-    public user() {
+    public User() {
     }
 
     // Constructor con todos los campos
-    public user(int userID, String name, String email, String password, boolean status, LocalDateTime createdAt, role roleID) {
+    public User(int userID, String name, String email, String password, boolean status, LocalDateTime createdAt, Role roleID) {
         this.userID = userID;
         this.name = name;
         this.email = email;
@@ -100,11 +100,11 @@ public class user {
         this.createdAt = createdAt;
     }
 
-    public role getRoleID() {
+    public Role getRoleID() {
         return roleID;
     }
 
-    public void setRoleID(role roleID) {
+    public void setRoleID(Role roleID) {
         this.roleID = roleID;
     }
 }

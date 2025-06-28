@@ -7,30 +7,30 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.Cristofer.SoftComerce.model.user;
+import com.Cristofer.SoftComerce.model.User;
 
-public interface Iuser extends JpaRepository<user, Integer> {
+public interface IUser extends JpaRepository<User, Integer> {
 
-    @Query("SELECT u FROM user u WHERE u.status != false")
-    List<user> getListUserActive();
+    @Query("SELECT u FROM User u WHERE u.status != false")
+    List<User> getListUserActive();
 
     @Query("""
         SELECT u
-        FROM user u
+        FROM User u
         WHERE (:name IS NULL OR u.name LIKE %:name%) 
             AND (:email IS NULL OR u.email LIKE %:email%) 
             AND (:status IS NULL OR u.status = :status)
     """)
-    List<user> filterUser(
+    List<User> filterUser(
         @Param("name") String name,
         @Param("email") String email,
         @Param("status") Boolean status
     );
 
     // Verificar si un correo ya está registrado
-    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM user u WHERE u.email = :email")
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email")
     boolean existsByEmail(@Param("email") String email);
 
     // Buscar un usuario por correo electrónico
-    Optional<user> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }

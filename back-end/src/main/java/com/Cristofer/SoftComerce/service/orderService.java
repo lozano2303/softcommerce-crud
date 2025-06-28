@@ -12,39 +12,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.Cristofer.SoftComerce.DTO.orderDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.order;
-import com.Cristofer.SoftComerce.model.user;
-import com.Cristofer.SoftComerce.repository.Iorder;
-import com.Cristofer.SoftComerce.repository.Iorderproduct; // Cambiado a Iorderproduct
-import com.Cristofer.SoftComerce.repository.Iuser;
+import com.Cristofer.SoftComerce.DTO.OrderDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.Order;
+import com.Cristofer.SoftComerce.model.User;
+import com.Cristofer.SoftComerce.repository.IOrder;
+import com.Cristofer.SoftComerce.repository.IOrderProduct;
+import com.Cristofer.SoftComerce.repository.IUser;
 
 @Service
-public class orderService {
-    private static final Logger logger = LoggerFactory.getLogger(orderService.class);
+public class OrderService {
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     @Autowired
-    private Iorder orderRepository;
+    private IOrder orderRepository;
 
     @Autowired
-    private Iuser userRepository;
+    private IUser userRepository;
 
     @Autowired
-    private Iorderproduct orderProductRepository; // Cambiado a Iorderproduct
+    private IOrderProduct orderProductRepository;
 
     // Listar todas las órdenes
-    public List<order> findAll() {
+    public List<Order> findAll() {
         return orderRepository.findAll();
     }
 
-    
-    public List<order> findByUserName(String name) {
+    public List<Order> findByUserName(String name) {
         return orderRepository.findByUserName(name);
     }
 
     // Buscar orden por ID
-    public Optional<order> findById(int id) {
+    public Optional<Order> findById(int id) {
         return orderRepository.findById(id);
     }
 
@@ -55,53 +54,53 @@ public class orderService {
 
     // Guardar orden con validaciones
     @Transactional
-    public responseDTO save(orderDTO orderDTO) {
+    public ResponseDTO save(OrderDTO orderDTO) {
         // Validar que el usuario exista
-        Optional<user> userEntity = userRepository.findById(orderDTO.getUserID());
+        Optional<User> userEntity = userRepository.findById(orderDTO.getUserID());
         if (!userEntity.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Usuario no encontrado");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Usuario no encontrado");
         }
 
         try {
             // Crear y guardar la orden
-            order orderEntity = new order();
+            Order orderEntity = new Order();
             orderEntity.setUserID(userEntity.get());
-            orderEntity.setStatus(false); // Estado inicial como true
+            orderEntity.setStatus(false); // Estado inicial como false (ajustar según lógica de negocio)
             orderEntity.setCreatedAt(LocalDateTime.now());
 
             // Guardar la orden
-            order savedOrder = orderRepository.save(orderEntity);
+            Order savedOrder = orderRepository.save(orderEntity);
 
             // Calcular el totalPrice dinámicamente
             double totalPrice = calculateTotalPrice(savedOrder.getOrderID());
             logger.info("Orden creada con totalPrice calculado: {}", totalPrice);
 
-            return new responseDTO(HttpStatus.OK.toString(), "Orden registrada correctamente");
+            return new ResponseDTO(HttpStatus.OK.toString(), "Orden registrada correctamente");
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al guardar la orden: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
         } catch (Exception e) {
             logger.error("Error inesperado al guardar la orden: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
         }
     }
 
     // Actualizar orden por ID
     @Transactional
-    public responseDTO update(int id, orderDTO orderDTO) {
-        Optional<order> existingOrder = findById(id);
+    public ResponseDTO update(int id, OrderDTO orderDTO) {
+        Optional<Order> existingOrder = findById(id);
         if (!existingOrder.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Orden no encontrada");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Orden no encontrada");
         }
 
-        Optional<user> userEntity = userRepository.findById(orderDTO.getUserID());
+        Optional<User> userEntity = userRepository.findById(orderDTO.getUserID());
         if (!userEntity.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Usuario no encontrado");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Usuario no encontrado");
         }
 
         try {
             // Actualizar datos de la orden
-            order orderToUpdate = existingOrder.get();
+            Order orderToUpdate = existingOrder.get();
             orderToUpdate.setUserID(userEntity.get());
             orderToUpdate.setCreatedAt(LocalDateTime.now());
 
@@ -111,42 +110,42 @@ public class orderService {
             double totalPrice = calculateTotalPrice(orderToUpdate.getOrderID());
             logger.info("Orden actualizada con totalPrice calculado: {}", totalPrice);
 
-            return new responseDTO(HttpStatus.OK.toString(), "Orden actualizada exitosamente");
+            return new ResponseDTO(HttpStatus.OK.toString(), "Orden actualizada exitosamente");
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al actualizar la orden: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
         } catch (Exception e) {
             logger.error("Error inesperado al actualizar la orden: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
         }
     }
 
     // Eliminar una orden por ID
     @Transactional
-    public responseDTO deleteById(int id) {
-        Optional<order> orderEntity = findById(id);
+    public ResponseDTO deleteById(int id) {
+        Optional<Order> orderEntity = findById(id);
         if (!orderEntity.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Orden no encontrada");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Orden no encontrada");
         }
 
         try {
             orderRepository.deleteById(id);
-            return new responseDTO(HttpStatus.OK.toString(), "Orden eliminada correctamente");
+            return new ResponseDTO(HttpStatus.OK.toString(), "Orden eliminada correctamente");
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al eliminar la orden: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error de base de datos");
         } catch (Exception e) {
             logger.error("Error inesperado al eliminar la orden: {}", e.getMessage());
-            return new responseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Error inesperado");
         }
     }
 
     // Método para actualizar solo el totalPrice de una orden
     @Transactional
     public void updateOrderTotalPrice(int orderId, double totalPrice) {
-        Optional<order> orderOpt = orderRepository.findById(orderId);
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isPresent()) {
-            order orderToUpdate = orderOpt.get();
+            Order orderToUpdate = orderOpt.get();
             orderToUpdate.setTotalPrice(totalPrice);
             orderRepository.save(orderToUpdate);
             logger.info("TotalPrice actualizado para orden {}: {}", orderId, totalPrice);

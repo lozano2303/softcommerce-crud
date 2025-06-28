@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "shipping")
-public class shipping {
+public class Shipping {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class shipping {
 
     @ManyToOne
     @JoinColumn(name = "orderID", nullable = false)
-    private order order;
+    private Order order;
 
     @Column(name = "address", length = 255, nullable = false)
     private String address;
@@ -32,25 +32,25 @@ public class shipping {
     private String country;
 
     @Column(name = "postal_code", length = 20, nullable = false)
-    private String postal_code;
+    private String postalCode;
 
-    @Column(name="status",nullable =false, columnDefinition = "boolean default true ")
+    @Column(name="status", nullable = false, columnDefinition = "boolean default true ")
     private boolean status;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    public shipping() {}
+    public Shipping() {}
 
-    public shipping(int shippingID, order order, String address, String city, String country, String postal_code, boolean status, LocalDateTime created_at) {
+    public Shipping(int shippingID, Order order, String address, String city, String country, String postalCode, boolean status, LocalDateTime createdAt) {
         this.shippingID = shippingID;
         this.order = order;
         this.address = address;
         this.city = city;
         this.country = country;
-        this.postal_code = postal_code;
+        this.postalCode = postalCode;
         this.status = status;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 
     public int getShippingID() {
@@ -61,11 +61,11 @@ public class shipping {
         this.shippingID = shippingID;
     }
 
-    public order getOrder() {
+    public Order getOrder() {
         return order;
     }
 
-    public void setOrder(order order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 
@@ -93,12 +93,12 @@ public class shipping {
         this.country = country;
     }
 
-    public String getPostal_code() {
-        return postal_code;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostal_code(String postal_code) {
-        this.postal_code = postal_code;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public boolean isStatus() {
@@ -109,11 +109,11 @@ public class shipping {
         this.status = status;
     }
 
-    public LocalDateTime getCreated_at() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

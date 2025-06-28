@@ -1,16 +1,13 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class userDTO {
+public class UserDTO {
 
     private String name;
-
     private String email;
-
     private String password;
-
     private int roleID; // Campo adicional para manejar el rol del usuario
 
-    public userDTO(String name, String email, String password, int roleID) {
+    public UserDTO(String name, String email, String password, int roleID) {
         this.name = name;
         this.email = email;
         this.password = password;

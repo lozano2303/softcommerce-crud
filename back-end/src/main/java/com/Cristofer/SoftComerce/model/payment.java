@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "payment")
-public class payment {
+public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paymentID")
@@ -19,7 +19,7 @@ public class payment {
 
     @ManyToOne
     @JoinColumn(name = "userID", referencedColumnName = "userID")
-    private user user;
+    private User user;
 
     @Column(name = "amount", nullable = false)
     private double amount;
@@ -33,7 +33,7 @@ public class payment {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public payment(int paymentID, user user, double amount, String method,boolean status, LocalDateTime createdAt) {
+    public Payment(int paymentID, User user, double amount, String method, boolean status, LocalDateTime createdAt) {
         this.paymentID = paymentID;
         this.user = user;
         this.amount = amount;
@@ -42,7 +42,7 @@ public class payment {
         this.createdAt = createdAt;
     }
 
-    public payment() {
+    public Payment() {
         // Inicializa los valores por defecto si es necesario
     }
 
@@ -54,11 +54,11 @@ public class payment {
         this.paymentID = paymentID;
     }
 
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

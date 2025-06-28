@@ -10,180 +10,180 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.Cristofer.SoftComerce.DTO.orderproductDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.order;
-import com.Cristofer.SoftComerce.model.orderproduct;
-import com.Cristofer.SoftComerce.model.orderproductId;
-import com.Cristofer.SoftComerce.model.product;
-import com.Cristofer.SoftComerce.repository.Iorder;
-import com.Cristofer.SoftComerce.repository.Iorderproduct;
-import com.Cristofer.SoftComerce.repository.Iproduct;
+import com.Cristofer.SoftComerce.DTO.OrderProductDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.Order;
+import com.Cristofer.SoftComerce.model.OrderProduct;
+import com.Cristofer.SoftComerce.model.OrderProductId;
+import com.Cristofer.SoftComerce.model.Product;
+import com.Cristofer.SoftComerce.repository.IOrder;
+import com.Cristofer.SoftComerce.repository.IOrderProduct;
+import com.Cristofer.SoftComerce.repository.IProduct;
 
 @Service
-public class orderproductService {
+public class OrderProductService {
     
-    private static final Logger logger = LoggerFactory.getLogger(orderproductService.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrderProductService.class);
 
     @Autowired
-    private Iorderproduct orderproductRepository;
+    private IOrderProduct orderProductRepository;
 
     @Autowired
-    private Iorder orderRepository;
+    private IOrder orderRepository;
 
     @Autowired
-    private Iproduct productRepository;
+    private IProduct productRepository;
     
     @Autowired
-    private orderService orderService;
+    private OrderService orderService;
 
     // Listar todas las relaciones order-product
-    public List<orderproduct> findAll() {
-        return orderproductRepository.findAll();
+    public List<OrderProduct> findAll() {
+        return orderProductRepository.findAll();
     }
 
     // Buscar una relación por ID
-    public Optional<orderproduct> findById(orderproductId id) {
-        return orderproductRepository.findById(id);
+    public Optional<OrderProduct> findById(OrderProductId id) {
+        return orderProductRepository.findById(id);
     }
 
     // Método para filtrar relaciones order-product
-    public List<orderproduct> filterOrderProducts(Integer orderID, Integer productID, Integer quantity, Double subtotal) {
-        return orderproductRepository.filterOrderProducts(orderID, productID, quantity, subtotal);
+    public List<OrderProduct> filterOrderProducts(Integer orderID, Integer productID, Integer quantity, Double subtotal) {
+        return orderProductRepository.filterOrderProducts(orderID, productID, quantity, subtotal);
     }
 
     // Guardar una relación order-product con validaciones
     @Transactional
-    public responseDTO save(orderproductDTO orderproductDTO) {
+    public ResponseDTO save(OrderProductDTO orderProductDTO) {
         try {
             // Validar que la orden exista
-            Optional<order> orderEntity = orderRepository.findById(orderproductDTO.getOrderID());
+            Optional<Order> orderEntity = orderRepository.findById(orderProductDTO.getOrderID());
             if (!orderEntity.isPresent()) {
-                return new responseDTO("error", "Orden no encontrada");
+                return new ResponseDTO("error", "Orden no encontrada");
             }
 
             // Validar que el producto exista
-            Optional<product> productEntity = productRepository.findById(orderproductDTO.getProductID());
+            Optional<Product> productEntity = productRepository.findById(orderProductDTO.getProductID());
             if (!productEntity.isPresent()) {
-                return new responseDTO("error", "Producto no encontrado");
+                return new ResponseDTO("error", "Producto no encontrado");
             }
 
             // Convertir DTO a entidad y guardar
-            orderproductId id = new orderproductId();
-            id.setOrderID(orderproductDTO.getOrderID());
-            id.setProductID(orderproductDTO.getProductID());
+            OrderProductId id = new OrderProductId();
+            id.setOrderID(orderProductDTO.getOrderID());
+            id.setProductID(orderProductDTO.getProductID());
 
-            orderproduct orderproduct = new orderproduct();
-            orderproduct.setId(id);
-            orderproduct.setOrder(orderEntity.get());
-            orderproduct.setProduct(productEntity.get());
-            orderproduct.setQuantity(orderproductDTO.getQuantity());
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setId(id);
+            orderProduct.setOrder(orderEntity.get());
+            orderProduct.setProduct(productEntity.get());
+            orderProduct.setQuantity(orderProductDTO.getQuantity());
             
             // Calcular subtotal basado en precio del producto y cantidad
-            double subtotal = productEntity.get().getPrice() * orderproductDTO.getQuantity();
-            orderproduct.setSubtotal(subtotal);
+            double subtotal = productEntity.get().getPrice() * orderProductDTO.getQuantity();
+            orderProduct.setSubtotal(subtotal);
 
             // Guardar la relación order-product
-            orderproductRepository.save(orderproduct);
+            orderProductRepository.save(orderProduct);
             
             // Actualizar el totalPrice de la orden relacionada
-            updateOrderTotalPrice(orderproductDTO.getOrderID());
+            updateOrderTotalPrice(orderProductDTO.getOrderID());
 
             logger.info("Nuevo producto agregado a la orden {} - Producto: {}, Cantidad: {}, Subtotal: {}", 
-                orderproductDTO.getOrderID(), productEntity.get().getName(), 
-                orderproductDTO.getQuantity(), subtotal);
+                orderProductDTO.getOrderID(), productEntity.get().getName(), 
+                orderProductDTO.getQuantity(), subtotal);
 
-            return new responseDTO("success", "Relación orden-producto registrada correctamente");
+            return new ResponseDTO("success", "Relación orden-producto registrada correctamente");
 
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al guardar order-product: {}", e.getMessage());
-            return new responseDTO("error", "Error de base de datos al guardar la relación");
+            return new ResponseDTO("error", "Error de base de datos al guardar la relación");
         } catch (Exception e) {
             logger.error("Error inesperado al guardar order-product: {}", e.getMessage());
-            return new responseDTO("error", "Error inesperado al guardar la relación");
+            return new ResponseDTO("error", "Error inesperado al guardar la relación");
         }
     }
 
     // Actualizar una relación por ID
     @Transactional
-    public responseDTO update(orderproductId id, orderproductDTO orderproductDTO) {
+    public ResponseDTO update(OrderProductId id, OrderProductDTO orderProductDTO) {
         try {
-            Optional<orderproduct> existingOrderProduct = findById(id);
+            Optional<OrderProduct> existingOrderProduct = findById(id);
             if (!existingOrderProduct.isPresent()) {
-                return new responseDTO("error", "La relación no existe");
+                return new ResponseDTO("error", "La relación no existe");
             }
 
             // Validar que la orden exista
-            Optional<order> orderEntity = orderRepository.findById(orderproductDTO.getOrderID());
+            Optional<Order> orderEntity = orderRepository.findById(orderProductDTO.getOrderID());
             if (!orderEntity.isPresent()) {
-                return new responseDTO("error", "Orden no encontrada");
+                return new ResponseDTO("error", "Orden no encontrada");
             }
 
             // Validar que el producto exista
-            Optional<product> productEntity = productRepository.findById(orderproductDTO.getProductID());
+            Optional<Product> productEntity = productRepository.findById(orderProductDTO.getProductID());
             if (!productEntity.isPresent()) {
-                return new responseDTO("error", "Producto no encontrado");
+                return new ResponseDTO("error", "Producto no encontrado");
             }
 
             // Actualizar datos de la relación
-            orderproduct orderproductToUpdate = existingOrderProduct.get();
-            orderproductToUpdate.setOrder(orderEntity.get());
-            orderproductToUpdate.setProduct(productEntity.get());
-            orderproductToUpdate.setQuantity(orderproductDTO.getQuantity());
+            OrderProduct orderProductToUpdate = existingOrderProduct.get();
+            orderProductToUpdate.setOrder(orderEntity.get());
+            orderProductToUpdate.setProduct(productEntity.get());
+            orderProductToUpdate.setQuantity(orderProductDTO.getQuantity());
             
             // Recalcular subtotal
-            double subtotal = productEntity.get().getPrice() * orderproductDTO.getQuantity();
-            orderproductToUpdate.setSubtotal(subtotal);
+            double subtotal = productEntity.get().getPrice() * orderProductDTO.getQuantity();
+            orderProductToUpdate.setSubtotal(subtotal);
 
             // Guardar los cambios
-            orderproductRepository.save(orderproductToUpdate);
+            orderProductRepository.save(orderProductToUpdate);
             
             // Actualizar el totalPrice de la orden relacionada
-            updateOrderTotalPrice(orderproductDTO.getOrderID());
+            updateOrderTotalPrice(orderProductDTO.getOrderID());
 
             logger.info("Producto actualizado en la orden {} - Producto: {}, Nueva cantidad: {}, Nuevo subtotal: {}", 
-                orderproductDTO.getOrderID(), productEntity.get().getName(), 
-                orderproductDTO.getQuantity(), subtotal);
+                orderProductDTO.getOrderID(), productEntity.get().getName(), 
+                orderProductDTO.getQuantity(), subtotal);
 
-            return new responseDTO("success", "Relación orden-producto actualizada exitosamente");
+            return new ResponseDTO("success", "Relación orden-producto actualizada exitosamente");
 
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al actualizar order-product: {}", e.getMessage());
-            return new responseDTO("error", "Error de base de datos al actualizar la relación");
+            return new ResponseDTO("error", "Error de base de datos al actualizar la relación");
         } catch (Exception e) {
             logger.error("Error inesperado al actualizar order-product: {}", e.getMessage());
-            return new responseDTO("error", "Error inesperado al actualizar la relación");
+            return new ResponseDTO("error", "Error inesperado al actualizar la relación");
         }
     }
 
     // Eliminar una relación por ID
     @Transactional
-    public responseDTO deleteById(orderproductId id) {
+    public ResponseDTO deleteById(OrderProductId id) {
         try {
-            Optional<orderproduct> existingOrderProduct = findById(id);
+            Optional<OrderProduct> existingOrderProduct = findById(id);
             if (!existingOrderProduct.isPresent()) {
-                return new responseDTO("error", "Relación orden-producto no encontrada");
+                return new ResponseDTO("error", "Relación orden-producto no encontrada");
             }
 
             // Obtener el orderID antes de eliminar
             int orderId = existingOrderProduct.get().getOrder().getOrderID();
             
             // Eliminar la relación
-            orderproductRepository.deleteById(id);
+            orderProductRepository.deleteById(id);
             
             // Actualizar el totalPrice de la orden relacionada
             updateOrderTotalPrice(orderId);
 
             logger.info("Producto eliminado de la orden {}", orderId);
 
-            return new responseDTO("success", "Relación orden-producto eliminada correctamente");
+            return new ResponseDTO("success", "Relación orden-producto eliminada correctamente");
 
         } catch (DataAccessException e) {
             logger.error("Error de base de datos al eliminar order-product: {}", e.getMessage());
-            return new responseDTO("error", "Error de base de datos al eliminar la relación");
+            return new ResponseDTO("error", "Error de base de datos al eliminar la relación");
         } catch (Exception e) {
             logger.error("Error inesperado al eliminar order-product: {}", e.getMessage());
-            return new responseDTO("error", "Error inesperado al eliminar la relación");
+            return new ResponseDTO("error", "Error inesperado al eliminar la relación");
         }
     }
 
@@ -198,29 +198,29 @@ public class orderproductService {
         }
     }
 
-    // Convertir de orderproduct a orderproductDTO
-    public orderproductDTO convertToDTO(orderproduct orderproduct) {
-        return new orderproductDTO(
-            orderproduct.getOrder().getOrderID(),
-            orderproduct.getProduct().getProductID(),
-            orderproduct.getProduct().getName(),
-            orderproduct.getProduct().getPrice(),
-            orderproduct.getQuantity(),
-            orderproduct.getSubtotal()
+    // Convertir de OrderProduct a OrderProductDTO
+    public OrderProductDTO convertToDTO(OrderProduct orderProduct) {
+        return new OrderProductDTO(
+            orderProduct.getOrder().getOrderID(),
+            orderProduct.getProduct().getProductID(),
+            orderProduct.getProduct().getName(),
+            orderProduct.getProduct().getPrice(),
+            orderProduct.getQuantity(),
+            orderProduct.getSubtotal()
         );
     }
 
-    // Convertir de orderproductDTO a orderproduct
-    public orderproduct convertToModel(orderproductDTO orderproductDTO) {
-        orderproductId id = new orderproductId();
-        id.setOrderID(orderproductDTO.getOrderID());
-        id.setProductID(orderproductDTO.getProductID());
+    // Convertir de OrderProductDTO a OrderProduct
+    public OrderProduct convertToModel(OrderProductDTO orderProductDTO) {
+        OrderProductId id = new OrderProductId();
+        id.setOrderID(orderProductDTO.getOrderID());
+        id.setProductID(orderProductDTO.getProductID());
 
-        orderproduct orderproduct = new orderproduct();
-        orderproduct.setId(id);
-        orderproduct.setQuantity(orderproductDTO.getQuantity());
-        orderproduct.setSubtotal(orderproductDTO.getSubtotal());
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setId(id);
+        orderProduct.setQuantity(orderProductDTO.getQuantity());
+        orderProduct.setSubtotal(orderProductDTO.getSubtotal());
 
-        return orderproduct;
+        return orderProduct;
     }
 }

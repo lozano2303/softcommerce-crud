@@ -1,6 +1,6 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class loginDTO {
+public class LoginDTO {
     private String email;
     private String password;
 

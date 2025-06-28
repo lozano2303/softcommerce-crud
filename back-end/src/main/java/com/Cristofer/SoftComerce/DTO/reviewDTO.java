@@ -1,14 +1,14 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class reviewDTO {
+public class ReviewDTO {
 
     private int rating;
     private String comment;
-    private int userID; // Solo necesitamos el ID del usuario
+    private int userID;    // Solo necesitamos el ID del usuario
     private int productID; // Solo necesitamos el ID del producto
 
     // Constructor
-    public reviewDTO(int rating, String comment, int userID, int productID) {
+    public ReviewDTO(int rating, String comment, int userID, int productID) {
         this.rating = rating;
         this.comment = comment;
         this.userID = userID;

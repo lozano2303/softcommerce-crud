@@ -6,24 +6,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.Cristofer.SoftComerce.model.order;
+import com.Cristofer.SoftComerce.model.Order;
 
-public interface Iorder extends JpaRepository<order, Integer> {
+public interface IOrder extends JpaRepository<Order, Integer> {
     
     // Buscar órdenes por el ID del usuario (versión con userID)
-    @Query("SELECT o FROM order o WHERE o.userID.userID = :userID")
-    List<order> findByUserId(@Param("userID") int userID);
+    @Query("SELECT o FROM Order o WHERE o.userID.userID = :userID")
+    List<Order> findByUserId(@Param("userID") int userID);
     
     // Buscar órdenes por el ID del usuario (versión con userId - nombre alternativo)
-    @Query("SELECT o FROM order o WHERE o.userID.userID = :userId")
-    List<order> findByUserID(@Param("userId") int userId);
+    @Query("SELECT o FROM Order o WHERE o.userID.userID = :userId")
+    List<Order> findByUserID(@Param("userId") int userId);
     
     // Buscar órdenes por estado
-    @Query("SELECT o FROM order o WHERE o.status = :status")
-    List<order> findByStatus(@Param("status") boolean status);
+    @Query("SELECT o FROM Order o WHERE o.status = :status")
+    List<Order> findByStatus(@Param("status") boolean status);
 
-    @Query("SELECT o FROM order o WHERE o.userID.name = :name")
-List<order> findByUserName(@Param("name") String name); 
+    // Buscar órdenes por nombre de usuario
+    @Query("SELECT o FROM Order o WHERE o.userID.name = :name")
+    List<Order> findByUserName(@Param("name") String name); 
 
-List<order> findByUserIDIn(List<Long> userIds);
+    // Buscar órdenes por lista de IDs de usuario
+    List<Order> findByUserIDIn(List<Long> userIds);
 }

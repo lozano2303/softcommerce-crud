@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.DTO.roleDTO;
-import com.Cristofer.SoftComerce.service.roleService;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.DTO.RoleDTO;
+import com.Cristofer.SoftComerce.service.RoleService;
 
 @RestController
 @RequestMapping("/api/v1/role")
-public class roleController {
+public class RoleController {
 
     @Autowired
-    private roleService roleService;
+    private RoleService roleService;
 
     // Registrar un nuevo rol
     @PostMapping("/")
-    public ResponseEntity<Object> registerRole(@RequestBody roleDTO roleDTO) {
-        responseDTO response = roleService.save(roleDTO);
+    public ResponseEntity<Object> registerRole(@RequestBody RoleDTO roleDTO) {
+        ResponseDTO response = roleService.save(roleDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -54,7 +54,7 @@ public class roleController {
     // Eliminar un rol por su ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRole(@PathVariable int id) {
-        responseDTO response = roleService.deleteById(id);
+        ResponseDTO response = roleService.deleteById(id);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -64,8 +64,8 @@ public class roleController {
 
     // Actualizar un rol por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateRole(@PathVariable int id, @RequestBody roleDTO roleDTO) {
-        responseDTO response = roleService.update(id, roleDTO);
+    public ResponseEntity<Object> updateRole(@PathVariable int id, @RequestBody RoleDTO roleDTO) {
+        ResponseDTO response = roleService.update(id, roleDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {

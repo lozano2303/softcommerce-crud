@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.DTO.reviewDTO;
-import com.Cristofer.SoftComerce.service.reviewService;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.DTO.ReviewDTO;
+import com.Cristofer.SoftComerce.service.ReviewService;
 
 @RestController
 @RequestMapping("/api/v1/review")
-public class reviewController {
+public class ReviewController {
 
     @Autowired
-    private reviewService reviewService;
+    private ReviewService reviewService;
 
     // Crear una nueva reseña
     @PostMapping("/")
-    public ResponseEntity<Object> createReview(@RequestBody reviewDTO reviewDTO) {
-        responseDTO response = reviewService.save(reviewDTO);
+    public ResponseEntity<Object> createReview(@RequestBody ReviewDTO reviewDTO) {
+        ResponseDTO response = reviewService.save(reviewDTO);
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
@@ -53,8 +53,8 @@ public class reviewController {
 
     // Actualizar una reseña por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateReview(@PathVariable int id, @RequestBody reviewDTO reviewDTO) {
-        responseDTO response = reviewService.update(id, reviewDTO);
+    public ResponseEntity<Object> updateReview(@PathVariable int id, @RequestBody ReviewDTO reviewDTO) {
+        ResponseDTO response = reviewService.update(id, reviewDTO);
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -65,7 +65,7 @@ public class reviewController {
     // Eliminar una reseña por su ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteReview(@PathVariable int id) {
-        responseDTO response = reviewService.deleteById(id);
+        ResponseDTO response = reviewService.deleteById(id);
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {

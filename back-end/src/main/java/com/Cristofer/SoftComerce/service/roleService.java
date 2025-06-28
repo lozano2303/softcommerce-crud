@@ -8,100 +8,98 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.DTO.roleDTO;
-import com.Cristofer.SoftComerce.model.role;
-import com.Cristofer.SoftComerce.repository.Irole;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.DTO.RoleDTO;
+import com.Cristofer.SoftComerce.model.Role;
+import com.Cristofer.SoftComerce.repository.IRole;
 
 @Service
-public class roleService {
+public class RoleService {
 
     @Autowired
-    private Irole roleRepository; // Cambiado de 'data' a 'roleRepository'
+    private IRole roleRepository;
 
     // Guardar rol
-    public responseDTO save(roleDTO roleDTO) {
+    public ResponseDTO save(RoleDTO roleDTO) {
         if (!validateRole(roleDTO)) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del rol inválidos");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del rol inválidos");
         }
-    
-        role roleRegister = convertToModel(roleDTO);
+
+        Role roleRegister = convertToModel(roleDTO);
         roleRepository.save(roleRegister);
-    
-        return new responseDTO(HttpStatus.OK.toString(), "Rol guardado exitosamente");
+
+        return new ResponseDTO(HttpStatus.OK.toString(), "Rol guardado exitosamente");
     }
 
     // Obtener todos los roles
-    public List<role> findAll() {
+    public List<Role> findAll() {
         return roleRepository.findAll();
     }
 
     // Buscar rol por ID
-    public Optional<role> findById(int id) {
+    public Optional<Role> findById(int id) {
         return roleRepository.findById(id);
     }
 
     // Actualizar rol
-    public responseDTO update(int id, roleDTO roleDTO) {
-        Optional<role> existingRole = findById(id);
+    public ResponseDTO update(int id, RoleDTO roleDTO) {
+        Optional<Role> existingRole = findById(id);
         if (!existingRole.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El rol no existe");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "El rol no existe");
         }
 
         if (!validateRole(roleDTO)) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del rol inválidos");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del rol inválidos");
         }
 
-        role roleToUpdate = existingRole.get();
-        roleToUpdate.setName(roleDTO.getroleName()); // Asumiendo que el método se llama setName()
+        Role roleToUpdate = existingRole.get();
+        roleToUpdate.setName(roleDTO.getRoleName());
 
         roleRepository.save(roleToUpdate);
 
-        return new responseDTO(HttpStatus.OK.toString(), "Rol actualizado correctamente");
+        return new ResponseDTO(HttpStatus.OK.toString(), "Rol actualizado correctamente");
     }
 
     // Eliminar rol
-    public responseDTO deleteById(int id) {
-        Optional<role> role = findById(id);
+    public ResponseDTO deleteById(int id) {
+        Optional<Role> role = findById(id);
         if (!role.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El rol no existe");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "El rol no existe");
         }
 
         roleRepository.delete(role.get());
 
-        return new responseDTO(HttpStatus.OK.toString(), "Rol eliminado correctamente");
+        return new ResponseDTO(HttpStatus.OK.toString(), "Rol eliminado correctamente");
     }
 
     // Filtrar roles por nombre
-    public List<role> filterRoles(String roleName) {
-        List<role> allRoles = roleRepository.findAll();
-        
+    public List<Role> filterRoles(String roleName) {
+        List<Role> allRoles = roleRepository.findAll();
+
         if (roleName == null || roleName.isEmpty()) {
             return allRoles;
         }
-        
-        // Filtrar roles que contengan el texto proporcionado (case insensitive)
+
         return allRoles.stream()
                 .filter(r -> r.getName().toLowerCase().contains(roleName.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
     // Validaciones
-    private boolean validateRole(roleDTO dto) {
-        return dto.getroleName() != null && !dto.getroleName().isBlank();
+    private boolean validateRole(RoleDTO dto) {
+        return dto.getRoleName() != null && !dto.getRoleName().isBlank();
     }
 
     // Conversión de DTO a modelo
-    public role convertToModel(roleDTO roleDTO) {
-        role role = new role();
-        role.setName(roleDTO.getroleName());
+    public Role convertToModel(RoleDTO roleDTO) {
+        Role role = new Role();
+        role.setName(roleDTO.getRoleName());
         return role;
     }
 
     // Conversión de modelo a DTO
-    public roleDTO convertToDTO(role role) {
-        roleDTO dto = new roleDTO(null);
-        dto.setroleName(role.getName());
+    public RoleDTO convertToDTO(Role role) {
+        RoleDTO dto = new RoleDTO(role.getName());
         return dto;
     }
 }

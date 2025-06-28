@@ -1,6 +1,6 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class orderproductDTO {
+public class OrderProductDTO {
 
     private int orderID;
     private int productID;
@@ -10,7 +10,7 @@ public class orderproductDTO {
     private double subtotal;
 
     // Constructor completo
-    public orderproductDTO(int orderID, int productID, String productName, double productPrice, int quantity, double subtotal) {
+    public OrderProductDTO(int orderID, int productID, String productName, double productPrice, int quantity, double subtotal) {
         this.orderID = orderID;
         this.productID = productID;
         this.productName = productName;
@@ -19,7 +19,7 @@ public class orderproductDTO {
         this.subtotal = subtotal;
     }
 
-    // Getters y Setters (añadir los nuevos)
+    // Getters y Setters
     public String getProductName() {
         return productName;
     }
@@ -35,6 +35,7 @@ public class orderproductDTO {
     public void setProductPrice(double productPrice) {
         this.productPrice = productPrice;
     }
+
     public int getOrderID() {
         return orderID;
     }

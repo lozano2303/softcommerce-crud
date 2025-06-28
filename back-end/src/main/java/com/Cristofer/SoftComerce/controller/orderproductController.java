@@ -15,23 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.orderproductDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.orderproduct;
-import com.Cristofer.SoftComerce.model.orderproductId;
-import com.Cristofer.SoftComerce.service.orderproductService;
+import com.Cristofer.SoftComerce.DTO.OrderProductDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.OrderProduct;
+import com.Cristofer.SoftComerce.model.OrderProductId;
+import com.Cristofer.SoftComerce.service.OrderProductService;
 
 @RestController
 @RequestMapping("/api/v1/orderproduct")
-public class orderproductController {
+public class OrderProductController {
 
     @Autowired
-    private orderproductService orderproductService;
+    private OrderProductService orderProductService;
 
     // Crear una nueva relación order-product
     @PostMapping("/")
-    public ResponseEntity<Object> createOrderProduct(@RequestBody orderproductDTO orderproductDTO) {
-        responseDTO response = orderproductService.save(orderproductDTO);
+    public ResponseEntity<Object> createOrderProduct(@RequestBody OrderProductDTO orderProductDTO) {
+        ResponseDTO response = orderProductService.save(orderProductDTO);
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
@@ -42,16 +42,16 @@ public class orderproductController {
     // Obtener todas las relaciones order-product
     @GetMapping("/")
     public ResponseEntity<Object> getAllOrderProducts() {
-        return new ResponseEntity<>(orderproductService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(orderProductService.findAll(), HttpStatus.OK);
     }
 
     // Obtener una relación order-product por ID compuesto
     @GetMapping("/{orderID}/{productID}")
     public ResponseEntity<Object> getOrderProductById(@PathVariable int orderID, @PathVariable int productID) {
-        orderproductId id = new orderproductId();
+        OrderProductId id = new OrderProductId();
         id.setOrderID(orderID);
         id.setProductID(productID);
-        Optional<orderproduct> orderProduct = orderproductService.findById(id);
+        Optional<OrderProduct> orderProduct = orderProductService.findById(id);
 
         if (!orderProduct.isPresent()) {
             return new ResponseEntity<>("Relación orden-producto no encontrada", HttpStatus.NOT_FOUND);
@@ -64,11 +64,11 @@ public class orderproductController {
     public ResponseEntity<Object> updateOrderProduct(
             @PathVariable int orderID,
             @PathVariable int productID,
-            @RequestBody orderproductDTO orderproductDTO) {
-        orderproductId id = new orderproductId();
+            @RequestBody OrderProductDTO orderProductDTO) {
+        OrderProductId id = new OrderProductId();
         id.setOrderID(orderID);
         id.setProductID(productID);
-        responseDTO response = orderproductService.update(id, orderproductDTO);
+        ResponseDTO response = orderProductService.update(id, orderProductDTO);
 
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -80,10 +80,10 @@ public class orderproductController {
     // Eliminar una relación order-product por ID compuesto
     @DeleteMapping("/{orderID}/{productID}")
     public ResponseEntity<Object> deleteOrderProduct(@PathVariable int orderID, @PathVariable int productID) {
-        orderproductId id = new orderproductId();
+        OrderProductId id = new OrderProductId();
         id.setOrderID(orderID);
         id.setProductID(productID);
-        responseDTO response = orderproductService.deleteById(id);
+        ResponseDTO response = orderProductService.deleteById(id);
 
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -100,7 +100,7 @@ public class orderproductController {
             @RequestParam(required = false, name = "quantity") Integer quantity,
             @RequestParam(required = false, name = "subtotal") Double subtotal) {
 
-        var orderProductList = orderproductService.filterOrderProducts(orderID, productID, quantity, subtotal);
+        var orderProductList = orderProductService.filterOrderProducts(orderID, productID, quantity, subtotal);
         return new ResponseEntity<>(orderProductList, HttpStatus.OK);
     }
 }

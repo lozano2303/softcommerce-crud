@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.orderDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO; // Importar la clase order
-import com.Cristofer.SoftComerce.model.order;
-import com.Cristofer.SoftComerce.service.orderService;
+import com.Cristofer.SoftComerce.DTO.OrderDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.Order;
+import com.Cristofer.SoftComerce.service.OrderService;
 
 @RestController
 @RequestMapping("/api/v1/order")
-public class orderController {
+public class OrderController {
 
     @Autowired
-    private orderService orderService;
+    private OrderService orderService;
 
     // Registrar una nueva orden
     @PostMapping("/")
-    public ResponseEntity<Object> registerOrder(@RequestBody orderDTO orderDTO) {
-        responseDTO response = orderService.save(orderDTO);
+    public ResponseEntity<Object> registerOrder(@RequestBody OrderDTO orderDTO) {
+        ResponseDTO response = orderService.save(orderDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -56,19 +56,21 @@ public class orderController {
 
     // Eliminar una orden por su ID
     @DeleteMapping("/{id}")
-public ResponseEntity<Object> deleteOrder(@PathVariable int id) {
-    try {
-        orderService.deleteById(id); // Llamar al servicio para eliminar la orden
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Responder con 204 No Content
-    } catch (Exception e) {
-        return new ResponseEntity<>("Error al eliminar la orden: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> deleteOrder(@PathVariable int id) {
+        ResponseDTO response = orderService.deleteById(id);
+        if (response.getStatus().equals(HttpStatus.OK.toString())) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else if (response.getStatus().equals(HttpStatus.BAD_REQUEST.toString())) {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-}
 
     // Actualizar una orden por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateOrder(@PathVariable int id, @RequestBody orderDTO orderDTO) {
-        responseDTO response = orderService.update(id, orderDTO);
+    public ResponseEntity<Object> updateOrder(@PathVariable int id, @RequestBody OrderDTO orderDTO) {
+        ResponseDTO response = orderService.update(id, orderDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -77,14 +79,12 @@ public ResponseEntity<Object> deleteOrder(@PathVariable int id) {
     }
 
     // Filtrar órdenes por nombre del usuario
-    @GetMapping("filter")
+    @GetMapping("/filter")
     public ResponseEntity<Object> filterOrdersByUser(
             @RequestParam(name = "userName") String userName) {
-        
-        // Llamar al servicio para encontrar órdenes por nombre de usuario
-        List<order> orders = orderService.findByUserName(userName);
-    
-        // Verificar si la lista está vacía
+
+        List<Order> orders = orderService.findByUserName(userName);
+
         if (orders.isEmpty()) {
             return new ResponseEntity<>("No se encontraron órdenes para el usuario especificado", HttpStatus.NOT_FOUND);
         }

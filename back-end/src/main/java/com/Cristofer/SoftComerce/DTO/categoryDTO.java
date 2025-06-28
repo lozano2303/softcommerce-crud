@@ -1,10 +1,10 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class categoryDTO {
+public class CategoryDTO {
 
     private String categoryName;
 
-    public categoryDTO(String categoryName) {
+    public CategoryDTO(String categoryName) {
         this.categoryName = categoryName;
     }
 
@@ -12,7 +12,7 @@ public class categoryDTO {
         return categoryName;
     }
 
-    public void setCategoryCame(String categoryName) {
+    public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
 

@@ -8,119 +8,118 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.Cristofer.SoftComerce.DTO.productDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.category;
-import com.Cristofer.SoftComerce.model.product;
-import com.Cristofer.SoftComerce.repository.Icategory;
-import com.Cristofer.SoftComerce.repository.Iproduct;
+import com.Cristofer.SoftComerce.DTO.ProductDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.Category;
+import com.Cristofer.SoftComerce.model.Product;
+import com.Cristofer.SoftComerce.repository.ICategory;
+import com.Cristofer.SoftComerce.repository.IProduct;
 
 @Service
-public class productService {
+public class ProductService {
 
     @Autowired
-    private Iproduct productRepository;
+    private IProduct productRepository;
 
     @Autowired
-    private Icategory categoryRepository;
+    private ICategory categoryRepository;
 
     // ✅ Guardar producto
-    public responseDTO save(productDTO productDTO) {
+    public ResponseDTO save(ProductDTO productDTO) {
         if (!validateProduct(productDTO)) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del producto inválidos");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del producto inválidos");
         }
 
         // Obtener la categoría desde el repositorio
-        Optional<category> categoryOptional = categoryRepository.findById(productDTO.getCategoryID());
+        Optional<Category> categoryOptional = categoryRepository.findById(productDTO.getCategoryID());
         if (!categoryOptional.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Categoría no encontrada");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Categoría no encontrada");
         }
 
-        product product = convertToModel(productDTO, categoryOptional.get());
+        Product product = convertToModel(productDTO, categoryOptional.get());
         productRepository.save(product);
 
-        return new responseDTO(HttpStatus.OK.toString(), "Producto guardado exitosamente");
+        return new ResponseDTO(HttpStatus.OK.toString(), "Producto guardado exitosamente");
     }
 
     // ✅ Obtener todos los productos
-    public List<product> findAll() {
+    public List<Product> findAll() {
         return productRepository.findAll();
     }
 
-    public List<product> filterProducts(String name, String category, Double price, Boolean status, Integer stock) {
+    public List<Product> filterProducts(String name, String category, Double price, Boolean status, Integer stock) {
         return productRepository.filterProducts(name, category, price, status, stock);
     }
 
     // ✅ Buscar producto por ID
-    public Optional<product> findById(int id) {
+    public Optional<Product> findById(int id) {
         return productRepository.findById(id);
     }
 
     // ✅ Eliminar (desactivar) producto
-    public responseDTO deleteProduct(int id) {
-        Optional<product> product = findById(id);
+    public ResponseDTO deleteProduct(int id) {
+        Optional<Product> product = findById(id);
         if (!product.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El producto no existe");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "El producto no existe");
         }
-    
-        product productToDelete = product.get();
+
+        Product productToDelete = product.get();
         productToDelete.setStatus(false);
         productRepository.save(productToDelete);
-    
-        return new responseDTO(HttpStatus.OK.toString(), "Producto eliminado correctamente");
+
+        return new ResponseDTO(HttpStatus.OK.toString(), "Producto eliminado correctamente");
     }
 
     // ✅ Reactivar producto
-
-    public responseDTO updateProductStatus(int id, boolean status) {
-        Optional<product> optionalProduct = productRepository.findById(id);
+    public ResponseDTO updateProductStatus(int id, boolean status) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (!optionalProduct.isPresent()) {
-            return new responseDTO("400 BAD_REQUEST", "El producto no existe");
+            return new ResponseDTO("400 BAD_REQUEST", "El producto no existe");
         }
 
-        product productToUpdate = optionalProduct.get();
+        Product productToUpdate = optionalProduct.get();
         productToUpdate.setStatus(status);
         productRepository.save(productToUpdate);
 
         String message = status ? "Producto activado correctamente" : "Producto desactivado correctamente";
-        return new responseDTO("200 OK", message);
+        return new ResponseDTO("200 OK", message);
     }
 
     // ✅ Actualizar producto
-    public responseDTO update(int id, productDTO productDTO) {
+    public ResponseDTO update(int id, ProductDTO productDTO) {
         // Depuración: imprimir el objeto recibido
         System.out.println("Datos recibidos en la solicitud de actualización: " + productDTO);
-    
-        Optional<product> existingProduct = findById(id);
+
+        Optional<Product> existingProduct = findById(id);
         if (!existingProduct.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El producto no existe");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "El producto no existe");
         }
-    
+
         if (!validateProduct(productDTO)) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del producto inválidos");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Datos del producto inválidos");
         }
-    
+
         // Obtener la categoría desde el repositorio
-        Optional<category> categoryOptional = categoryRepository.findById(productDTO.getCategoryID());
+        Optional<Category> categoryOptional = categoryRepository.findById(productDTO.getCategoryID());
         if (!categoryOptional.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "Categoría no encontrada");
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(), "Categoría no encontrada");
         }
-    
-        product productToUpdate = existingProduct.get();
+
+        Product productToUpdate = existingProduct.get();
         productToUpdate.setName(productDTO.getName());
         productToUpdate.setDescription(productDTO.getDescription());
         productToUpdate.setPrice(productDTO.getPrice());
         productToUpdate.setStock(productDTO.getStock());
         productToUpdate.setImageUrl(productDTO.getImageUrl()); // Asegúrate de que este campo se esté mapeando correctamente
         productToUpdate.setCategory(categoryOptional.get());
-    
+
         productRepository.save(productToUpdate);
-    
-        return new responseDTO(HttpStatus.OK.toString(), "✅ Producto actualizado correctamente");
+
+        return new ResponseDTO(HttpStatus.OK.toString(), "✅ Producto actualizado correctamente");
     }
 
     // ✅ Validaciones
-    private boolean validateProduct(productDTO dto) {
+    private boolean validateProduct(ProductDTO dto) {
         return dto.getName() != null && !dto.getName().isBlank() &&
                 dto.getDescription() != null && !dto.getDescription().isBlank() &&
                 dto.getPrice() >= 0 &&
@@ -129,8 +128,8 @@ public class productService {
     }
 
     // ✅ Conversión de DTO a modelo
-    public product convertToModel(productDTO productDTO, category category) {
-        return new product(
+    public Product convertToModel(ProductDTO productDTO, Category category) {
+        return new Product(
             0,
             productDTO.getName(),
             productDTO.getDescription(),
@@ -144,14 +143,14 @@ public class productService {
     }
 
     // ✅ Conversión de modelo a DTO
-    public productDTO convertToDTO(product product) {
-        return new productDTO(
+    public ProductDTO convertToDTO(Product product) {
+        return new ProductDTO(
             product.getName(),
             product.getDescription(),
             product.getPrice(),
             product.getStock(),
             product.getImageUrl(),
-            product.getCategory().getcategoryID()
+            product.getCategory().getCategoryID()
         );
     }
 }

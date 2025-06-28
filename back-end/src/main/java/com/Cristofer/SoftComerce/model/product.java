@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "product")
-public class product {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productID")
@@ -40,11 +40,11 @@ public class product {
 
     @ManyToOne
     @JoinColumn(name = "categoryID", nullable = false)
-    private category category;
+    private Category category;
 
-    public product() {}
+    public Product() {}
 
-    public product(int productID, String name, String description, double price, int stock, LocalDateTime createdAt, String imageUrl, boolean status, category category) {
+    public Product(int productID, String name, String description, double price, int stock, LocalDateTime createdAt, String imageUrl, boolean status, Category category) {
         this.productID = productID;
         this.name = name;
         this.description = description;
@@ -121,11 +121,11 @@ public class product {
         this.status = status;
     }
 
-    public category getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(category category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 }

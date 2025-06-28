@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity(name = "category")
-public class category {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,29 +17,25 @@ public class category {
     @Column(name = "categoryName", length = 50, nullable = false)
     private String categoryName;
 
-    public category() {}
+    public Category() {}
 
-    public category(int categoryID, String categoryName) {
+    public Category(int categoryID, String categoryName) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
     }
 
-    // Getter para categoryID
-    public int getcategoryID() {
+    public int getCategoryID() {
         return categoryID;
     }
 
-    // Setter para categoryID
     public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
 
-    // Getter para categoryName
     public String getCategoryName() {
         return categoryName;
     }
 
-    // Setter para categoryName
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }

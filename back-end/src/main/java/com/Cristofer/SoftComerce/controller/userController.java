@@ -14,22 +14,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.loginDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.DTO.userDTO;
-import com.Cristofer.SoftComerce.service.userService;
+import com.Cristofer.SoftComerce.DTO.LoginDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.DTO.UserDTO;
+import com.Cristofer.SoftComerce.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/user")
-public class userController {
+public class UserController {
 
     @Autowired
-    private userService userService;
+    private UserService userService;
 
     // Registrar un nuevo usuario
     @PostMapping("/register")
-    public ResponseEntity<Object> registerUser(@RequestBody userDTO userDTO) {
-        responseDTO response = userService.register(userDTO);
+    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO) {
+        ResponseDTO response = userService.register(userDTO);
         if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
@@ -39,8 +39,8 @@ public class userController {
 
     // Iniciar sesión
     @PostMapping("/login")
-    public ResponseEntity<Object> loginUser(@RequestBody loginDTO loginDTO) {
-        responseDTO response = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
+    public ResponseEntity<Object> loginUser(@RequestBody LoginDTO loginDTO) {
+        ResponseDTO response = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
         if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else if ("error".equals(response.getStatus()) && "El usuario está inactivo. Comuníquese con el administrador.".equals(response.getMessage())) {
@@ -69,7 +69,7 @@ public class userController {
     // Eliminar un usuario por su ID (deshabilitar)
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable int id) {
-        responseDTO response = userService.deleteById(id);
+        ResponseDTO response = userService.deleteById(id);
         if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -80,7 +80,7 @@ public class userController {
     // Reactivar un usuario por su ID
     @PatchMapping("/{id}/reactivate")
     public ResponseEntity<Object> reactivateUser(@PathVariable int id) {
-        responseDTO response = userService.reactivateUser(id);
+        ResponseDTO response = userService.reactivateUser(id);
         if ("success".equals(response.getStatus())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -101,8 +101,8 @@ public class userController {
 
     // Actualizar un usuario por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<responseDTO> updateUser(@PathVariable int id, @RequestBody userDTO userDTO) {
-        responseDTO response = userService.update(id, userDTO);
+    public ResponseEntity<ResponseDTO> updateUser(@PathVariable int id, @RequestBody UserDTO userDTO) {
+        ResponseDTO response = userService.update(id, userDTO);
         if ("success".equals(response.getStatus())) {
             return ResponseEntity.ok(response);
         } else {

@@ -6,7 +6,7 @@ import java.util.Objects;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class paymentorderId implements Serializable {
+public class PaymentOrderId implements Serializable {
 
     private int paymentID;
     private int orderID;
@@ -33,7 +33,7 @@ public class paymentorderId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        paymentorderId that = (paymentorderId) o;
+        PaymentOrderId that = (PaymentOrderId) o;
         return paymentID == that.paymentID && orderID == that.orderID;
     }
 

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "review")
-public class review {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,21 +20,21 @@ public class review {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Relación con la entidad user (clave foránea)
+    // Relación con la entidad User (clave foránea)
     @ManyToOne
     @JoinColumn(name = "userID", nullable = false)
-    private user user;
+    private User user;
 
-    // Relación con la entidad product (clave foránea)
+    // Relación con la entidad Product (clave foránea)
     @ManyToOne
     @JoinColumn(name = "productID", nullable = false)
-    private product product;
+    private Product product;
 
     // Constructores
-    public review() {
+    public Review() {
     }
 
-    public review(int reviewID, int rating, String comment, LocalDateTime createdAt, user user, product product) {
+    public Review(int reviewID, int rating, String comment, LocalDateTime createdAt, User user, Product product) {
         this.reviewID = reviewID;
         this.rating = rating;
         this.comment = comment;
@@ -76,19 +76,19 @@ public class review {
         this.createdAt = createdAt;
     }
 
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public product getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(product product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 }

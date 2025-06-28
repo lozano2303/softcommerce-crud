@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.paymentDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.service.paymentService;
+import com.Cristofer.SoftComerce.DTO.PaymentDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.service.PaymentService;
 
 @RestController
 @RequestMapping("/api/v1/payment")
-public class paymentController {
+public class PaymentController {
 
     @Autowired
-    private paymentService paymentService;
+    private PaymentService paymentService;
 
     // Registrar un nuevo pago
     @PostMapping("/")
-    public ResponseEntity<Object> registerPayment(@RequestBody paymentDTO paymentDTO) {
-        responseDTO response = paymentService.save(paymentDTO);
+    public ResponseEntity<Object> registerPayment(@RequestBody PaymentDTO paymentDTO) {
+        ResponseDTO response = paymentService.save(paymentDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -45,38 +45,39 @@ public class paymentController {
     // Obtener un pago por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Object> getPaymentById(@PathVariable int id) {
-        Optional<paymentDTO> payment = paymentService.findById(id).map(paymentService::convertToDTO);
+        Optional<PaymentDTO> payment = paymentService.findById(id).map(paymentService::convertToDTO);
         if (!payment.isPresent()) {
             return new ResponseEntity<>("Pago no encontrado", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(payment.get(), HttpStatus.OK);
     }
 
-    // Eliminar un pago por su ID
+    // Eliminar (deshabilitar) un pago por su ID
     @PutMapping("/disable/{id}")
-public ResponseEntity<responseDTO> disablePayment(@PathVariable int id) {
-    responseDTO response = paymentService.disablePayment(id);
-    if (response.getStatus().equals("success")) {
-        return ResponseEntity.ok(response);
-    } else {
-        return ResponseEntity.badRequest().body(response);
+    public ResponseEntity<ResponseDTO> disablePayment(@PathVariable int id) {
+        ResponseDTO response = paymentService.disablePayment(id);
+        if (response.getStatus().equals("success")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
-}
 
-@PutMapping("/reactivate/{id}")
-public ResponseEntity<responseDTO> reactivatePayment(@PathVariable int id) {
-    responseDTO response = paymentService.reactivatePayment(id);
-    if (response.getStatus().equals("success")) {
-        return ResponseEntity.ok(response);
-    } else {
-        return ResponseEntity.badRequest().body(response);
+    // Reactivar un pago por su ID
+    @PutMapping("/reactivate/{id}")
+    public ResponseEntity<ResponseDTO> reactivatePayment(@PathVariable int id) {
+        ResponseDTO response = paymentService.reactivatePayment(id);
+        if (response.getStatus().equals("success")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
-}
 
     // Actualizar un pago por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updatePayment(@PathVariable int id, @RequestBody paymentDTO paymentDTO) {
-        responseDTO response = paymentService.update(id, paymentDTO);
+    public ResponseEntity<Object> updatePayment(@PathVariable int id, @RequestBody PaymentDTO paymentDTO) {
+        ResponseDTO response = paymentService.update(id, paymentDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -88,7 +89,7 @@ public ResponseEntity<responseDTO> reactivatePayment(@PathVariable int id) {
     @GetMapping("/filter")
     public ResponseEntity<Object> filterPaymentsByMethod(
             @RequestParam(required = false, name = "method") String method) {
-        
+
         var paymentList = paymentService.filterPaymentsByMethod(method);
         return new ResponseEntity<>(paymentList, HttpStatus.OK);
     }

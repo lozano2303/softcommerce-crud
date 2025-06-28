@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.categoryDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.category;
-import com.Cristofer.SoftComerce.service.categoryService;
+import com.Cristofer.SoftComerce.DTO.CategoryDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.Category;
+import com.Cristofer.SoftComerce.service.CategoryService;
 
 @RestController
 @RequestMapping("/api/v1/category")
-public class categoryController {
+public class CategoryController {
 
     @Autowired
-    private categoryService categoryService;
+    private CategoryService categoryService;
 
     // ✅ Crear categoría
     @PostMapping("/")
-    public ResponseEntity<Object> registerCategory(@RequestBody categoryDTO categoryDTO) {
-        responseDTO response = categoryService.save(categoryDTO);
+    public ResponseEntity<Object> registerCategory(@RequestBody CategoryDTO categoryDTO) {
+        ResponseDTO response = categoryService.save(categoryDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -41,7 +41,7 @@ public class categoryController {
     // ✅ Obtener todas las categorías
     @GetMapping("/")
     public ResponseEntity<Object> getAllCategories() {
-        List<category> categories = categoryService.findAll();
+        List<Category> categories = categoryService.findAll();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
@@ -59,14 +59,14 @@ public class categoryController {
     public ResponseEntity<Object> filterCategory(
         @RequestParam(required = false, name = "categoryName") String categoryName) {
     
-    var categoryList = categoryService.filterCategory(categoryName);
-    return new ResponseEntity<>(categoryList, HttpStatus.OK);
+        var categoryList = categoryService.filterCategory(categoryName);
+        return new ResponseEntity<>(categoryList, HttpStatus.OK);
     }
 
     // ✅ Actualizar categoría
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateCategory(@PathVariable int id, @RequestBody categoryDTO categoryDTO) {
-        responseDTO response = categoryService.update(id, categoryDTO);
+    public ResponseEntity<Object> updateCategory(@PathVariable int id, @RequestBody CategoryDTO categoryDTO) {
+        ResponseDTO response = categoryService.update(id, categoryDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -76,7 +76,7 @@ public class categoryController {
     // ✅ Eliminar categoría
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCategory(@PathVariable int id) {
-        responseDTO response = categoryService.deleteCategory(id);
+        ResponseDTO response = categoryService.deleteCategory(id);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {

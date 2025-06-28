@@ -3,15 +3,15 @@ package com.Cristofer.SoftComerce.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.Cristofer.SoftComerce.model.role;
-import com.Cristofer.SoftComerce.repository.Irole;
+import com.Cristofer.SoftComerce.model.Role;
+import com.Cristofer.SoftComerce.repository.IRole;
 
 @Component
 public class RoleDataInitializer implements CommandLineRunner {
 
-    private final Irole roleRepository;
+    private final IRole roleRepository;
 
-    public RoleDataInitializer(Irole roleRepository) {
+    public RoleDataInitializer(IRole roleRepository) {
         this.roleRepository = roleRepository;
     }
 
@@ -19,7 +19,7 @@ public class RoleDataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Verificar si el rol Admin ya existe
         if (!roleRepository.existsByName("Admin")) {
-            role adminRole = new role();
+            Role adminRole = new Role();
             adminRole.setName("Admin");
             roleRepository.save(adminRole);
             System.out.println("Rol Admin creado exitosamente");

@@ -1,12 +1,12 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class paymentDTO {
+public class PaymentDTO {
 
     private int userID;
     private double amount;
     private String method;
 
-    public paymentDTO(int userID, double amount, String method) {
+    public PaymentDTO(int userID, double amount, String method) {
         this.userID = userID;
         this.amount = amount;
         this.method = method;

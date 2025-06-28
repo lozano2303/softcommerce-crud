@@ -2,7 +2,7 @@ package com.Cristofer.SoftComerce.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class productDTO {
+public class ProductDTO {
     private String name;
     private String description;
     private double price;
@@ -13,7 +13,7 @@ public class productDTO {
 
     private int categoryID;
 
-    public productDTO(String name, String description, double price, int stock, String imageUrl, int categoryID) {
+    public ProductDTO(String name, String description, double price, int stock, String imageUrl, int categoryID) {
         this.name = name;
         this.description = description;
         this.price = price;

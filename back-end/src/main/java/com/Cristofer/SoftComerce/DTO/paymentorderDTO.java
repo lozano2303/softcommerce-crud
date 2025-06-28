@@ -1,12 +1,12 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class paymentorderDTO {
+public class PaymentOrderDTO {
 
     private int paymentID;
     private int orderID;
 
     // Constructor
-    public paymentorderDTO(int paymentID, int orderID) {
+    public PaymentOrderDTO(int paymentID, int orderID) {
         this.paymentID = paymentID;
         this.orderID = orderID;
     }

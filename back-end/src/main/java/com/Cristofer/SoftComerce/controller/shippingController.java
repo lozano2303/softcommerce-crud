@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.DTO.shippingDTO;
-import com.Cristofer.SoftComerce.service.shippingService;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.DTO.ShippingDTO;
+import com.Cristofer.SoftComerce.service.ShippingService;
 
 @RestController
 @RequestMapping("/api/v1/shipping")
-public class shippingController {
+public class ShippingController {
 
     @Autowired
-    private shippingService shippingService;
+    private ShippingService shippingService;
 
     // Registrar un nuevo envío
     @PostMapping("/")
-    public ResponseEntity<Object> registerShipping(@RequestBody shippingDTO shippingDTO) {
-        responseDTO response = shippingService.save(shippingDTO);
+    public ResponseEntity<Object> registerShipping(@RequestBody ShippingDTO shippingDTO) {
+        ResponseDTO response = shippingService.save(shippingDTO);
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -45,30 +45,31 @@ public class shippingController {
     // Obtener un envío por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Object> getShippingById(@PathVariable int id) {
-        Optional<shippingDTO> shipping = shippingService.findById(id).map(shippingService::convertToDTO);
+        Optional<ShippingDTO> shipping = shippingService.findById(id).map(shippingService::convertToDTO);
         if (!shipping.isPresent()) {
             return new ResponseEntity<>("Envío no encontrado", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(shipping.get(), HttpStatus.OK);
     }
 
+    // Desactivar un envío por su ID
     @PutMapping("/deactivate/{id}")
-public ResponseEntity<responseDTO> deactivateShipping(@PathVariable int id) {
-    responseDTO response = shippingService.deactivateShipping(id);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-}
+    public ResponseEntity<ResponseDTO> deactivateShipping(@PathVariable int id) {
+        ResponseDTO response = shippingService.deactivateShipping(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-@PutMapping("/reactivate/{id}")
-public ResponseEntity<responseDTO> reactivateShipping(@PathVariable int id) {
-    responseDTO response = shippingService.reactivateShipping(id);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-}
-
+    // Reactivar un envío por su ID
+    @PutMapping("/reactivate/{id}")
+    public ResponseEntity<ResponseDTO> reactivateShipping(@PathVariable int id) {
+        ResponseDTO response = shippingService.reactivateShipping(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     // Actualizar un envío por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateShipping(@PathVariable int id, @RequestBody shippingDTO shippingDTO) {
-        responseDTO response = shippingService.update(id, shippingDTO);
+    public ResponseEntity<Object> updateShipping(@PathVariable int id, @RequestBody ShippingDTO shippingDTO) {
+        ResponseDTO response = shippingService.update(id, shippingDTO);
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {

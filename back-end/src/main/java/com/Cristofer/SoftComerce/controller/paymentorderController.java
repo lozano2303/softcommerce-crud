@@ -15,47 +15,47 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.paymentorderDTO;
-import com.Cristofer.SoftComerce.DTO.responseDTO;
-import com.Cristofer.SoftComerce.model.paymentorder;
-import com.Cristofer.SoftComerce.model.paymentorderId;
-import com.Cristofer.SoftComerce.service.paymentorderService;
+import com.Cristofer.SoftComerce.DTO.PaymentOrderDTO;
+import com.Cristofer.SoftComerce.DTO.ResponseDTO;
+import com.Cristofer.SoftComerce.model.PaymentOrder;
+import com.Cristofer.SoftComerce.model.PaymentOrderId;
+import com.Cristofer.SoftComerce.service.PaymentOrderService;
 
 @RestController
 @RequestMapping("/api/v1/paymentorder")
-public class paymentorderController {
+public class PaymentOrderController {
 
     @Autowired
-    private paymentorderService paymentorderService;
+    private PaymentOrderService paymentOrderService;
 
     // Crear una nueva relación payment-order
     @PostMapping("/")
-public ResponseEntity<Object> createPaymentOrder(@RequestBody paymentorderDTO paymentorderDTO) {
-    System.out.println("Datos recibidos - paymentID: " + paymentorderDTO.getPaymentID());
-    System.out.println("Datos recibidos - orderID: " + paymentorderDTO.getOrderID());
-    
-    if (paymentorderDTO.getPaymentID() == 0 || paymentorderDTO.getOrderID() == 0) {
-        System.out.println("Datos inválidos recibidos");
+    public ResponseEntity<Object> createPaymentOrder(@RequestBody PaymentOrderDTO paymentOrderDTO) {
+        System.out.println("Datos recibidos - paymentID: " + paymentOrderDTO.getPaymentID());
+        System.out.println("Datos recibidos - orderID: " + paymentOrderDTO.getOrderID());
+
+        if (paymentOrderDTO.getPaymentID() == 0 || paymentOrderDTO.getOrderID() == 0) {
+            System.out.println("Datos inválidos recibidos");
+        }
+
+        ResponseDTO response = paymentOrderService.save(paymentOrderDTO);
+        return new ResponseEntity<>(response, response.getStatus().equals("success") ?
+                HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
     }
-    
-    responseDTO response = paymentorderService.save(paymentorderDTO);
-    return new ResponseEntity<>(response, response.getStatus().equals("success") ? 
-        HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
-}
 
     // Obtener todas las relaciones payment-order
     @GetMapping("/")
     public ResponseEntity<Object> getAllPaymentOrders() {
-        return new ResponseEntity<>(paymentorderService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(paymentOrderService.findAll(), HttpStatus.OK);
     }
 
     // Obtener una relación payment-order por ID compuesto
     @GetMapping("/{paymentID}/{orderID}")
     public ResponseEntity<Object> getPaymentOrderById(@PathVariable int paymentID, @PathVariable int orderID) {
-        paymentorderId id = new paymentorderId();
+        PaymentOrderId id = new PaymentOrderId();
         id.setPaymentID(paymentID);
         id.setOrderID(orderID);
-        Optional<paymentorder> paymentOrder = paymentorderService.findById(id);
+        Optional<PaymentOrder> paymentOrder = paymentOrderService.findById(id);
 
         if (!paymentOrder.isPresent()) {
             return new ResponseEntity<>("Relación método de pago-orden no encontrada", HttpStatus.NOT_FOUND);
@@ -68,11 +68,11 @@ public ResponseEntity<Object> createPaymentOrder(@RequestBody paymentorderDTO pa
     public ResponseEntity<Object> updatePaymentOrder(
             @PathVariable int paymentID,
             @PathVariable int orderID,
-            @RequestBody paymentorderDTO paymentorderDTO) {
-        paymentorderId id = new paymentorderId();
+            @RequestBody PaymentOrderDTO paymentOrderDTO) {
+        PaymentOrderId id = new PaymentOrderId();
         id.setPaymentID(paymentID);
         id.setOrderID(orderID);
-        responseDTO response = paymentorderService.update(id, paymentorderDTO);
+        ResponseDTO response = paymentOrderService.update(id, paymentOrderDTO);
 
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -84,10 +84,10 @@ public ResponseEntity<Object> createPaymentOrder(@RequestBody paymentorderDTO pa
     // Eliminar una relación payment-order por ID compuesto
     @DeleteMapping("/{paymentID}/{orderID}")
     public ResponseEntity<Object> deletePaymentOrder(@PathVariable int paymentID, @PathVariable int orderID) {
-        paymentorderId id = new paymentorderId();
+        PaymentOrderId id = new PaymentOrderId();
         id.setPaymentID(paymentID);
         id.setOrderID(orderID);
-        responseDTO response = paymentorderService.deleteById(id);
+        ResponseDTO response = paymentOrderService.deleteById(id);
 
         if (response.getStatus().equals("success")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -102,7 +102,7 @@ public ResponseEntity<Object> createPaymentOrder(@RequestBody paymentorderDTO pa
             @RequestParam(required = false, name = "paymentID") Integer paymentID,
             @RequestParam(required = false, name = "orderID") Integer orderID) {
 
-        var paymentOrderList = paymentorderService.filterPaymentOrders(paymentID, orderID);
+        var paymentOrderList = paymentOrderService.filterPaymentOrders(paymentID, orderID);
         return new ResponseEntity<>(paymentOrderList, HttpStatus.OK);
     }
 }

@@ -1,18 +1,18 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class roleDTO {
+public class RoleDTO {
 
     private String roleName;
 
-    public roleDTO(String roleName) {
+    public RoleDTO(String roleName) {
         this.roleName = roleName;
     }
 
-    public String getroleName() {
+    public String getRoleName() {
         return roleName;
     }
 
-    public void setroleName(String roleName) {
+    public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 
