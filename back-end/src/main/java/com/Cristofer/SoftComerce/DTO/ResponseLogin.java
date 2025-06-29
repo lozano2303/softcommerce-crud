@@ -1,18 +1,19 @@
 package com.Cristofer.SoftComerce.DTO;
 
-public class ResponseDTO {
+public class ResponseLogin {
     private String status;
     private String message;
+    private String token;
 
-    // Constructores
-    public ResponseDTO() {}
+    public ResponseLogin() {}
 
-    public ResponseDTO(String status, String message) {
+    public ResponseLogin(String status, String message, String token) {
         this.status = status;
         this.message = message;
+        this.token = token;
     }
 
-    // Getters y Setters
+    // Getters y setters
     public String getStatus() {
         return status;
     }
@@ -27,5 +28,13 @@ public class ResponseDTO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

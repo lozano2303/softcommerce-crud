@@ -4,6 +4,10 @@ public class RoleDTO {
 
     private String roleName;
 
+    
+    public RoleDTO() {
+    }
+
     public RoleDTO(String roleName) {
         this.roleName = roleName;
     }

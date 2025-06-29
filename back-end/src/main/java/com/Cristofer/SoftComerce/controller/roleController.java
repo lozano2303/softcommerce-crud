@@ -1,5 +1,8 @@
 package com.Cristofer.SoftComerce.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,75 +13,64 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Cristofer.SoftComerce.DTO.ResponseDTO;
 import com.Cristofer.SoftComerce.DTO.RoleDTO;
+import com.Cristofer.SoftComerce.model.Role;
 import com.Cristofer.SoftComerce.service.RoleService;
 
 @RestController
-@RequestMapping("/api/v1/role")
+@RequestMapping("/api/roles")
 public class RoleController {
 
     @Autowired
     private RoleService roleService;
 
-    // Registrar un nuevo rol
-    @PostMapping("/")
-    public ResponseEntity<Object> registerRole(@RequestBody RoleDTO roleDTO) {
+    // Obtener todos los roles
+    @GetMapping
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok(roleService.findAll());
+    }
+
+    // Obtener rol por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRoleById(@PathVariable int id) {
+        Optional<Role> role = roleService.findById(id);
+        return role.<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rol no encontrado"));
+    }
+
+    // Registrar rol
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDTO> register(@RequestBody RoleDTO roleDTO) {
         ResponseDTO response = roleService.save(roleDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return ResponseEntity.ok(response);
         } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
-    // Obtener todos los roles
-    @GetMapping("/")
-    public ResponseEntity<Object> getAllRoles() {
-        return new ResponseEntity<>(roleService.findAll(), HttpStatus.OK);
-    }
-
-    // Obtener un rol por su ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getRoleById(@PathVariable int id) {
-        var role = roleService.findById(id);
-        if (!role.isPresent()) {
-            return new ResponseEntity<>("Rol no encontrado", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(role.get(), HttpStatus.OK);
-    }
-
-    // Eliminar un rol por su ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteRole(@PathVariable int id) {
-        ResponseDTO response = roleService.deleteById(id);
-        if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // Actualizar un rol por su ID
+    // Actualizar rol
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateRole(@PathVariable int id, @RequestBody RoleDTO roleDTO) {
+    public ResponseEntity<ResponseDTO> updateRole(@PathVariable int id, @RequestBody RoleDTO roleDTO) {
         ResponseDTO response = roleService.update(id, roleDTO);
         if (response.getStatus().equals(HttpStatus.OK.toString())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return ResponseEntity.ok(response);
         } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
-    // Filtrar roles por nombre
-    @GetMapping("/filter")
-    public ResponseEntity<Object> filterRoles(
-            @RequestParam(required = false, name = "roleName") String roleName) {
-        
-        var filteredRoles = roleService.filterRoles(roleName);
-        return new ResponseEntity<>(filteredRoles, HttpStatus.OK);
+    // Eliminar rol
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO> deleteRole(@PathVariable int id) {
+        ResponseDTO response = roleService.deleteById(id);
+        if (response.getStatus().equals(HttpStatus.OK.toString())) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 }

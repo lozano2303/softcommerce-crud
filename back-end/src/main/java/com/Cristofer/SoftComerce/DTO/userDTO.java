@@ -1,13 +1,17 @@
 package com.Cristofer.SoftComerce.DTO;
 
+import com.Cristofer.SoftComerce.model.Role;
+
 public class UserDTO {
 
     private String name;
     private String email;
     private String password;
-    private int roleID; // Campo adicional para manejar el rol del usuario
+    private Role roleID; // Campo adicional para manejar el rol del usuario
 
-    public UserDTO(String name, String email, String password, int roleID) {
+    public UserDTO() {}
+
+    public UserDTO(String name, String email, String password, Role roleID) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -38,11 +42,11 @@ public class UserDTO {
         this.password = password;
     }
 
-    public int getRoleID() {
+    public Role getRoleID() {
         return roleID;
     }
 
-    public void setRoleID(int roleID) {
+    public void setRoleID(Role roleID) {
         this.roleID = roleID;
     }
 }

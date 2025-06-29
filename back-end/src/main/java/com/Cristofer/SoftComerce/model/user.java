@@ -1,6 +1,12 @@
 package com.Cristofer.SoftComerce.model;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
@@ -23,7 +29,7 @@ public class User {
     @Column(name = "email", length = 150, nullable = false)
     private String email;
 
-    @Column(name = "password", length = 150, nullable = false)
+    @Column(name = "password", length = 255, nullable = false)
     private String password;
 
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
@@ -36,11 +42,10 @@ public class User {
     @JoinColumn(name = "roleID", nullable = false)
     private Role roleID;
 
-    // Constructor sin parámetros
-    public User() {
-    }
+    // Constructores, getters y setters...
 
-    // Constructor con todos los campos
+    public User() { } // Necesario para JPA
+
     public User(int userID, String name, String email, String password, boolean status, LocalDateTime createdAt, Role roleID) {
         this.userID = userID;
         this.name = name;
@@ -51,7 +56,12 @@ public class User {
         this.roleID = roleID;
     }
 
-    // Getters y setters
+    // Métodos de UserDetails
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + roleID.getName()));
+    }
+
     public int getUserID() {
         return userID;
     }
@@ -76,6 +86,7 @@ public class User {
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -106,5 +117,31 @@ public class User {
 
     public void setRoleID(Role roleID) {
         this.roleID = roleID;
+    }
+
+    @Override
+    public String getUsername() {
+        // Puedes retornar email como identificador de login
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status; // Usa el campo de tu modelo
     }
 }

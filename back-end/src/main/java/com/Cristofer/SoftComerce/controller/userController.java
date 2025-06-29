@@ -1,112 +1,70 @@
 package com.Cristofer.SoftComerce.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Cristofer.SoftComerce.DTO.LoginDTO;
 import com.Cristofer.SoftComerce.DTO.ResponseDTO;
 import com.Cristofer.SoftComerce.DTO.UserDTO;
+import com.Cristofer.SoftComerce.model.User;
 import com.Cristofer.SoftComerce.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+@Validated
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    // Registrar un nuevo usuario
-    @PostMapping("/register")
-    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO) {
-        ResponseDTO response = userService.register(userDTO);
-        if ("success".equals(response.getStatus())) {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+    @GetMapping
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
-    // Iniciar sesión
-    @PostMapping("/login")
-    public ResponseEntity<Object> loginUser(@RequestBody LoginDTO loginDTO) {
-        ResponseDTO response = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
-        if ("success".equals(response.getStatus())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else if ("error".equals(response.getStatus()) && "El usuario está inactivo. Comuníquese con el administrador.".equals(response.getMessage())) {
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-    }
-
-    // Obtener todos los usuarios
-    @GetMapping("/")
-    public ResponseEntity<Object> getAllUsers() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
-    }
-
-    // Obtener un usuario por su ID
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable int id) {
-        var user = userService.findById(id);
-        if (!user.isPresent()) {
-            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Eliminar un usuario por su ID (deshabilitar)
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable int id) {
-        ResponseDTO response = userService.deleteById(id);
-        if ("success".equals(response.getStatus())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+    // Perfil del usuario autenticado
+    @GetMapping("/profile")
+    public ResponseEntity<UserDetails> profile(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userDetails);
     }
 
-    // Reactivar un usuario por su ID
-    @PatchMapping("/{id}/reactivate")
-    public ResponseEntity<Object> reactivateUser(@PathVariable int id) {
-        ResponseDTO response = userService.reactivateUser(id);
-        if ("success".equals(response.getStatus())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // Filtrar usuarios por parámetros opcionales
-    @GetMapping("/filter")
-    public ResponseEntity<Object> filterUser(
-            @RequestParam(required = false, name = "name") String name,
-            @RequestParam(required = false, name = "email") String email,
-            @RequestParam(required = false, name = "status") Boolean status) {
-        
-        var userList = userService.filterUser(name, email, status);
-        return new ResponseEntity<>(userList, HttpStatus.OK);
-    }
-
-    // Actualizar un usuario por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO> updateUser(@PathVariable int id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<ResponseDTO> updateUser(@PathVariable int id, @RequestBody @Validated UserDTO userDTO) {
         ResponseDTO response = userService.update(id, userDTO);
-        if ("success".equals(response.getStatus())) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return response.getStatus().equals("success")
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseDTO> deleteUser(@PathVariable int id) {
+        ResponseDTO response = userService.deleteById(id);
+        return response.getStatus().equals("success")
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // Nota: eliminamos el endpoint de reactivación porque ya no aplica borrado lógico
 }
