@@ -10,7 +10,7 @@ import com.Cristofer.SoftComerce.model.Product;
 
 public interface IProduct extends JpaRepository<Product, Integer> {
 
-    @Query("SELECT p FROM Product p WHERE "
+    @Query("SELECT p FROM product p WHERE "
          + "(:name IS NULL OR p.name LIKE %:name%) AND "
          + "(:category IS NULL OR p.category.categoryName LIKE %:category%) AND "
          + "(:price IS NULL OR p.price = :price) AND "

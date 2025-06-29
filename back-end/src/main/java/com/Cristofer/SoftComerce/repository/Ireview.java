@@ -13,7 +13,7 @@ public interface IReview extends JpaRepository<Review, Integer> {
     // Filtrar reseñas por parámetros opcionales
     @Query("""
         SELECT r
-        FROM Review r
+        FROM review r
         WHERE (:rating IS NULL OR r.rating = :rating)
             AND (:comment IS NULL OR r.comment LIKE %:comment%)
             AND (:userID IS NULL OR r.user.userID = :userID)

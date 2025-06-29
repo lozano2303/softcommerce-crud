@@ -11,12 +11,12 @@ import com.Cristofer.SoftComerce.model.User;
 
 public interface IUser extends JpaRepository<User, Integer> {
 
-    @Query("SELECT u FROM User u WHERE u.status != false")
+    @Query("SELECT u FROM user u WHERE u.status != false")
     List<User> getListUserActive();
 
     @Query("""
         SELECT u
-        FROM User u
+        FROM user u
         WHERE (:name IS NULL OR u.name LIKE %:name%) 
             AND (:email IS NULL OR u.email LIKE %:email%) 
             AND (:status IS NULL OR u.status = :status)
@@ -28,7 +28,7 @@ public interface IUser extends JpaRepository<User, Integer> {
     );
 
     // Verificar si un correo ya está registrado
-    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email")
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM user u WHERE u.email = :email")
     boolean existsByEmail(@Param("email") String email);
 
     // Buscar un usuario por correo electrónico

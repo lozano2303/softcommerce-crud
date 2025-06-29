@@ -13,7 +13,7 @@ public interface IShipping extends JpaRepository<Shipping, Integer> {
     // Filtrar envíos por parámetros opcionales
     @Query("""
         SELECT s
-        FROM Shipping s
+        FROM shipping s
         WHERE (:orderID IS NULL OR s.order.orderID = :orderID)
             AND (:address IS NULL OR s.address LIKE %:address%)
             AND (:city IS NULL OR s.city LIKE %:city%)

@@ -14,7 +14,7 @@ public interface IPaymentOrder extends JpaRepository<PaymentOrder, PaymentOrderI
     // Método para filtrar relaciones payment-order
     @Query("""
         SELECT po
-        FROM PaymentOrder po
+        FROM paymentorder po
         WHERE (:paymentID IS NULL OR po.payment.paymentID = :paymentID)
         AND (:orderID IS NULL OR po.order.orderID = :orderID)
     """)

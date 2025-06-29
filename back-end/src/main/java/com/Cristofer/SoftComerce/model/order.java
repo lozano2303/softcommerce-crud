@@ -9,10 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
-@Table(name = "ordertable")
-@Entity
+@Entity(name = "order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +24,7 @@ public class Order {
     @Column(name = "total_price", nullable = false)
     private double totalPrice;
 
-    @Column(name="status",nullable =false, columnDefinition = "boolean default false")
+    @Column(name = "status", nullable = false, columnDefinition = "boolean default false")
     private boolean status;
 
     @Column(name = "created_at", nullable = false)

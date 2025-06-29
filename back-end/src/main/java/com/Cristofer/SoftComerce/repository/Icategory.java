@@ -10,12 +10,12 @@ import com.Cristofer.SoftComerce.model.Category;
 
 public interface ICategory extends JpaRepository<Category, Integer> {
 
-    // 🔍 Búsqueda por nombre de categoría (similar a validateProduct)
-    @Query("SELECT c FROM Category c WHERE c.categoryName LIKE %:categoryName%")
+    // 🔍 Búsqueda por nombre de categoría
+    @Query("SELECT c FROM category c WHERE c.categoryName LIKE %:categoryName%")
     List<Category> findByCategoryName(@Param("categoryName") String categoryName);
 
     // 🔍 Filtro avanzado
-    @Query("SELECT c FROM Category c WHERE " +
+    @Query("SELECT c FROM category c WHERE " +
             "(:categoryName IS NULL OR c.categoryName LIKE %:categoryName%)")
     List<Category> filterCategories(
         @Param("categoryName") String categoryName
