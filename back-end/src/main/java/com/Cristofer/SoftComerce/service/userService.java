@@ -52,10 +52,10 @@ public class UserService {
     // Registro de usuario
     @Transactional
     public ResponseDTO register(UserDTO userDTO) {
-        Role roleObj = userDTO.getRoleID();
-        Optional<Role> roleEntity = roleRepository.findById(roleObj.getRoleID());
+        // Siempre asigna el rol de Usuario (ID=1)
+        Optional<Role> roleEntity = roleRepository.findById(1);
         if (!roleEntity.isPresent()) {
-            return new ResponseDTO("error", "Rol no encontrado");
+            return new ResponseDTO("error", "Rol por defecto (Usuario) no encontrado");
         }
         if (userRepository.existsByEmail(userDTO.getEmail())) {
             return new ResponseDTO("error", "El correo electrónico ya está registrado");
@@ -136,6 +136,26 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public ResponseDTO updateRole(int userId, int roleId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (!userOpt.isPresent()) {
+            return new ResponseDTO("error", "Usuario no encontrado");
+        }
+        Optional<Role> roleOpt = roleRepository.findById(roleId);
+        if (!roleOpt.isPresent()) {
+            return new ResponseDTO("error", "Rol no encontrado");
+        }
+        try {
+            User user = userOpt.get();
+            user.setRoleID(roleOpt.get());
+            userRepository.save(user);
+            return new ResponseDTO("success", "Rol actualizado correctamente");
+        } catch (Exception e) {
+            return new ResponseDTO("error", "Error al actualizar el rol del usuario");
+        }
+    }
+
     // Actualizar usuario por ID
     @Transactional
     public ResponseDTO update(int id, UserDTO userDTO) {
@@ -145,11 +165,7 @@ public class UserService {
         }
         try {
             User userEntity = userOptional.get();
-            Role roleObj = userDTO.getRoleID();
-            Optional<Role> roleEntity = roleRepository.findById(roleObj.getRoleID());
-            if (!roleEntity.isPresent()) {
-                return new ResponseDTO("error", "Rol no encontrado");
-            }
+
             if (userDTO.getName() != null && !userDTO.getName().isEmpty()) {
                 if (userDTO.getName().length() < 1 || userDTO.getName().length() > 50) {
                     return new ResponseDTO("error", "El nombre debe estar entre 1 y 50 caracteres");
@@ -168,7 +184,7 @@ public class UserService {
                 }
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
-            userEntity.setRoleID(roleEntity.get());
+            // El rol no se actualiza desde el DTO
             userRepository.save(userEntity);
             return new ResponseDTO("success", "Usuario actualizado correctamente");
         } catch (DataAccessException e) {
@@ -183,8 +199,7 @@ public class UserService {
         return new UserDTO(
                 userEntity.getName(),
                 userEntity.getEmail(),
-                null, // Nunca expongas la contraseña
-                userEntity.getRoleID()
+                null // Nunca expongas la contraseña
         );
     }
 

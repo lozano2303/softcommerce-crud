@@ -59,7 +59,11 @@ public class User implements UserDetails {
     // Métodos de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + roleID.getName()));
+        String roleName = roleID.getName();
+        if (!roleName.startsWith("ROLE_")) {
+            roleName = "ROLE_" + roleName;
+        }
+        return Collections.singleton(new SimpleGrantedAuthority(roleName));
     }
 
     public int getUserID() {

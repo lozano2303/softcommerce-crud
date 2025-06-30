@@ -17,12 +17,18 @@ public class RoleDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Verificar si el rol Admin ya existe
-        if (!roleRepository.existsByName("Admin")) {
-            Role adminRole = new Role();
-            adminRole.setName("Admin");
-            roleRepository.save(adminRole);
-            System.out.println("Rol Admin creado exitosamente");
+        createRoleIfNotExists("ROLE_USUARIO");
+        createRoleIfNotExists("ROLE_VENDEDOR");
+        createRoleIfNotExists("ROLE_ADMIN");
+        createRoleIfNotExists("ROLE_SUPERVISOR");
+    }
+
+    private void createRoleIfNotExists(String roleName) {
+        if (!roleRepository.existsByName(roleName)) {
+            Role role = new Role();
+            role.setName(roleName);
+            roleRepository.save(role);
+            System.out.println("Rol " + roleName + " creado exitosamente");
         }
     }
 }

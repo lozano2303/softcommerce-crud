@@ -23,6 +23,7 @@ public class UserPublicController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO) {
+        // El UserDTO ya no contiene rol, siempre será registrado como "Usuario" por defecto.
         ResponseDTO response = userService.register(userDTO);
         return response.getStatus().equals("success")
                 ? ResponseEntity.ok(response)
