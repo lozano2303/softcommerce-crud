@@ -24,7 +24,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "7S/DwPEf6vbovfRkd1r1Gh8rtQJ1EO+81XGX4j4AmXc=";
+    private static final String SECRET_KEY = "";
 
     // Genera un token JWT que incluye roles e ID de usuario
     public String generateToken(UserDetails userDetails) {
