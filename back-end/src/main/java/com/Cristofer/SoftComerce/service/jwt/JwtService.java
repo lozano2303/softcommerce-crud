@@ -13,6 +13,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.Cristofer.SoftComerce.model.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,7 +26,7 @@ public class JwtService {
 
     private static final String SECRET_KEY = "7S/DwPEf6vbovfRkd1r1Gh8rtQJ1EO+81XGX4j4AmXc=";
 
-    // Genera un token JWT simple para el usuario (incluye roles)
+    // Genera un token JWT que incluye roles e ID de usuario
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> extraClaims = new HashMap<>();
         // Asegura que no haya doble ROLE_
@@ -36,6 +38,13 @@ public class JwtService {
                 })
                 .collect(Collectors.toList());
         extraClaims.put("roles", roles);
+
+        // Si el userDetails es instancia de tu modelo User, añade el ID
+        if (userDetails instanceof User user) {
+            int userId = user.getUserID();
+            extraClaims.put("userId", userId);
+        }
+
         return generateToken(extraClaims, userDetails);
     }
 
@@ -62,12 +71,28 @@ public class JwtService {
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
         Object rolesObj = claims.get("roles");
-        if (rolesObj instanceof List<?>) {
-            return ((List<?>) rolesObj).stream()
+        if (rolesObj instanceof List<?> list) {
+            return list.stream()
                     .map(Object::toString)
                     .collect(Collectors.toList());
         }
         return List.of();
+    }
+
+    // Método para extraer el userId del token (ahora int)
+    public Integer extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        Object userIdObj = claims.get("userId");
+        if (userIdObj instanceof Integer integer) {
+            return integer;
+        } else if (userIdObj != null) {
+            try {
+                return Integer.valueOf(userIdObj.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {

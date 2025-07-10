@@ -9,20 +9,19 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.Cristofer.SoftComerce.jwt.JwtAuthFilter;
+import com.Cristofer.SoftComerce.jwt.JwtAuthenticationFilter;
 import com.Cristofer.SoftComerce.repository.IUser;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -38,7 +37,8 @@ public class SecurityConfig {
                     "/api/recovery-requests/create",
                     "/api/v1/products/filter",
                     "/api/v1/category/filter",
-                    "/api/v1/review/filter"
+                    "/api/v1/review/filter",
+                    "/password/reset"
                 ).permitAll()
 
                 // Endpoints accesibles por USUARIO, SUPERVISOR y ADMIN
@@ -48,7 +48,8 @@ public class SecurityConfig {
 
                 // Endpoints accesibles por USUARIO, SUPERVISOR, VENDEDOR y ADMIN
                 .requestMatchers(
-                    "/api/users/{id}"
+                    "/api/users/{id}",
+                                "/password/change"
                 ).hasAnyRole("USUARIO", "SUPERVISOR", "VENDEDOR", "ADMIN")
 
                 // Endpoints accesibles por VENDEDOR, SUPERVISOR y ADMIN
@@ -119,7 +120,7 @@ public class SecurityConfig {
 
                 .anyRequest().authenticated()
             );
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -145,6 +146,6 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(IUser userRepository) {
         return username -> userRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+            .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("Usuario no encontrado"));
     }
 }
